@@ -25,7 +25,7 @@ const tableOptions = [
 
 export default async function DatabasePage({ searchParams }: { searchParams: SearchParams }) {
   const params = await searchParams;
-  const table = tableOptions.some(t => t.value === params.table) ? params.table! : "sources";
+  const table = tableOptions.some((t) => t.value === params.table) ? params.table! : "sources";
   const q = params.q ?? "";
 
   const cookieStore = await cookies();
@@ -89,7 +89,6 @@ export default async function DatabasePage({ searchParams }: { searchParams: Sea
     console.error("Database query failed in database browser page:", error);
   }
 
-  // Column headers based on keys in records
   const headers = data.length > 0 ? Object.keys(data[0]) : [];
 
   return (
@@ -106,19 +105,8 @@ export default async function DatabasePage({ searchParams }: { searchParams: Sea
         </div>
       </div>
 
-<<<<<<< HEAD
-
-
-<<<<<<< HEAD
       <style dangerouslySetInnerHTML={{
         __html: `
-=======
-      <style dangerouslySetInnerHTML={{ __html: `
->>>>>>> alex
-=======
-      <style dangerouslySetInnerHTML={{
-        __html: `
->>>>>>> bfc6eae (this is a update)
         .db-form {
           display: grid;
           grid-template-columns: 1fr 2fr 100px;
@@ -134,14 +122,14 @@ export default async function DatabasePage({ searchParams }: { searchParams: Sea
             width: 100%;
           }
         }
-      `}} />
+      `
+      }} />
 
-      {/* Selector & Search Form */}
       <form method="GET" className="panel db-form">
         <label style={{ fontSize: "12px", display: "flex", flexDirection: "column", gap: "4px" }}>
           Table selection
           <select name="table" defaultValue={table}>
-            {tableOptions.map(opt => (
+            {tableOptions.map((opt) => (
               <option key={opt.value} value={opt.value}>{opt.label}</option>
             ))}
           </select>
@@ -152,27 +140,20 @@ export default async function DatabasePage({ searchParams }: { searchParams: Sea
           <input name="q" defaultValue={q} placeholder={`Search fields in ${table}...`} />
         </label>
 
-        <button type="submit" className="primary query-btn" style={{ minHeight: "36px" }}>Query</button>
+        <button type="submit" className="primary query-btn" style={{ minHeight: "36px" }}>
+          Query
+        </button>
       </form>
 
-      {/* Dense Monospace Grid view */}
       <div className="panel" style={{ padding: "12px" }}>
         <h2 style={{ fontSize: "14px", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "10px" }}>
           Table Preview: <code>{table}</code> ({data.length} records)
         </h2>
-<<<<<<< HEAD
-<<<<<<< HEAD
-
-=======
-        
->>>>>>> alex
-=======
->>>>>>> bfc6eae (this is a update)
         <div className="table-wrap" style={{ border: "1px solid var(--border)", borderRadius: "4px" }}>
           <table style={{ fontFamily: "monospace", fontSize: "11px", whiteSpace: "nowrap" }}>
             <thead>
               <tr style={{ background: "var(--surface-muted)" }}>
-                {headers.map(h => (
+                {headers.map((h) => (
                   <th key={h} style={{ borderRight: "1px solid var(--border)", padding: "6px 8px" }}>{h}</th>
                 ))}
               </tr>
@@ -180,7 +161,7 @@ export default async function DatabasePage({ searchParams }: { searchParams: Sea
             <tbody>
               {data.map((row, idx) => (
                 <tr key={idx} style={{ borderBottom: "1px solid var(--border)" }}>
-                  {headers.map(h => {
+                  {headers.map((h) => {
                     const val = row[h];
                     let displayVal = "";
                     if (val === null || val === undefined) {

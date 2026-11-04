@@ -16,20 +16,8 @@ export const translations = {
     admin: "Admin",
     cms: "CMS",
     profile: "Profile",
-<<<<<<< HEAD
-<<<<<<< HEAD
-
-    //synergy
     synergy: "Synergy Track",
 
-=======
-    
->>>>>>> alex
-=======
-    synergy: "Synergy Track",
-
->>>>>>> bfc6eae (this is a update)
-    // Overview page
     overviewTitle: "Overview & Corpus Summary",
     overviewDesc: "Research database for Thailand humanoid, social, and service robotics records.",
     runDataPull: "Run data pull",
@@ -55,7 +43,6 @@ export const translations = {
     emptyStateTitle: "Database Empty State Guide",
     emptyStateDesc: "If there are no robot models or source signals populated, initialize the active Next.js database with the project setup commands:",
 
-    // Other page headers
     dashboardTitle: "Ecosystem Dashboard",
     dashboardDesc: "Aggregate counts across robot models, sources, contributions, and perspective annotations.",
     dataPullsTitle: "API Data Ingestion",
@@ -84,16 +71,7 @@ export const translations = {
     cmsDesc: "Edit source records, robot models, and community content in one place.",
     profileTitle: "User Profile & Simulation",
     profileDesc: "Manage your current session user email and role for simulation purposes.",
-<<<<<<< HEAD
-<<<<<<< HEAD
 
-=======
-    
->>>>>>> alex
-=======
-
->>>>>>> bfc6eae (this is a update)
-    // Copy Local Graph Paths
     copyLocalGraphPaths: "Copy Local Graph Paths",
     basePathLabel: "Base Path",
     basePathDesc: "Prefix prepended to file paths (e.g. repo URL)",
@@ -126,14 +104,6 @@ export const translations = {
     profile: "โปรไฟล์ระบบ",
     synergy: "Synergy Track",
 
-<<<<<<< HEAD
-
-    //synergy
-    synergy: "Synergy Track",
-
-=======
->>>>>>> alex
-    // Overview page
     overviewTitle: "ภาพรวมและสรุปคลังข้อมูล",
     overviewDesc: "ระบบฐานข้อมูลวิจัยเพื่อรวบรวมระบบนิเวศหุ่นยนต์และสัญญาณความคิดเห็นสาธารณะในประเทศไทย",
     runDataPull: "เรียกใช้การดึงข้อมูล",
@@ -159,7 +129,6 @@ export const translations = {
     emptyStateTitle: "คู่มือเริ่มใช้งานกรณีฐานข้อมูลว่างเปล่า",
     emptyStateDesc: "หากไม่มีโมเดลหุ่นยนต์หรือข้อมูลแหล่งที่มาปรากฏ ให้เรียกใช้คำสั่ง CLI ต่อไปนี้ที่โฟลเดอร์หลักของโปรเจกต์เพื่อตั้งต้นระบบ:",
 
-    // Other page headers
     dashboardTitle: "แดชบอร์ดระบบนิเวศ",
     dashboardDesc: "มุมมองของสาธารณชนและสื่อต่อหุ่นยนต์ฮิวแมนนอยด์และหุ่นยนต์โซเชียลในประเทศไทย",
     dataPullsTitle: "การดึงข้อมูลผ่าน API",
@@ -188,16 +157,7 @@ export const translations = {
     cmsDesc: "แก้ไขข้อมูลต้นทาง โมเดลหุ่นยนต์ และข้อมูลจากชุมชนได้ในที่เดียว",
     profileTitle: "โปรไฟล์และจำลองสิทธิ์ผู้ใช้งาน",
     profileDesc: "กำหนดอีเมลและสิทธิ์ผู้ใช้งานปัจจุบันเพื่อจุดประสงค์ในการจำลองและทดสอบระบบ",
-<<<<<<< HEAD
-<<<<<<< HEAD
 
-=======
-    
->>>>>>> alex
-=======
-
->>>>>>> bfc6eae (this is a update)
-    // Copy Local Graph Paths
     copyLocalGraphPaths: "คัดลอกเส้นทางกราฟเฉพาะที่ (Copy Local Graph Paths)",
     basePathLabel: "เส้นทางหลัก (Base Path)",
     basePathDesc: "คำขึ้นต้นที่จะใส่หน้าเส้นทางไฟล์ทั้งหมด (เช่น URL ของคลังโค้ด)",
