@@ -32,9 +32,13 @@ export const metadata: Metadata = {
     description: "Help keep the Thailand Humanoid Atlas accurate. Submit new robot deployments, academic papers, source links, or physical inventory updates.",
     images: ["/logo.png"]
   }
+<<<<<<< HEAD
 };
 
 const copy = {
+=======
+};const copy = {
+>>>>>>> alex
   en: {
     accountTitle: "Create an account to submit data",
     accountText: "Submissions are connected to your profile so you can track review status and show your contribution history to the community.",
@@ -106,10 +110,17 @@ export default async function SubmitDataPage() {
 
   const submissions = currentUser
     ? await prisma.submittedData.findMany({
+<<<<<<< HEAD
       where: { submittedById: currentUser.id },
       orderBy: { createdAt: "desc" },
       take: 20
     })
+=======
+        where: { submittedById: currentUser.id },
+        orderBy: { createdAt: "desc" },
+        take: 20
+      })
+>>>>>>> alex
     : [];
 
   return (
@@ -126,6 +137,11 @@ export default async function SubmitDataPage() {
           <h2>{localT.accountTitle}</h2>
           <p className="muted" style={{ marginBottom: 14 }}>{localT.accountText}</p>
           <form action={registerAndLoginUser} className="form" style={{ maxWidth: 520, gap: 12 }}>
+<<<<<<< HEAD
+=======
+            <input type="hidden" name="redirectTo" value="/submit-data" />
+            <input type="hidden" name="role" value="USER" />
+>>>>>>> alex
             <label>
               {localT.accountEmail}
               <input name="email" type="email" required placeholder="ichiro.kato@waseda.jp" />
@@ -191,6 +207,60 @@ export default async function SubmitDataPage() {
           </ul>
         </aside>
       </div>
+<<<<<<< HEAD
     </>
   );
 }
+=======
+
+      <h2 style={{ marginTop: 24 }}>{localT.queue}</h2>
+      {currentUser && <p className="muted" style={{ marginTop: -8 }}>{localT.queueHelp}</p>}
+      <div className="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>{localT.titleCol}</th>
+              <th>{localT.typeCol}</th>
+              <th>{localT.statusCol}</th>
+              <th>{localT.notesCol}</th>
+              <th>{localT.dateCol}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {submissions.map((sub) => (
+              <tr key={sub.id}>
+                <td>
+                  <strong>{sub.title}</strong>
+                  {sub.url && (
+                    <div style={{ marginTop: 4 }}>
+                      <a href={sub.url} target="_blank" rel="noreferrer" style={{ fontSize: 12, wordBreak: "break-all" }}>
+                        {sub.url}
+                      </a>
+                    </div>
+                  )}
+                </td>
+                <td><span className="badge">{sub.submissionType.replace(/_/g, " ")}</span></td>
+                <td>
+                  <span className={`badge ${sub.status === "APPROVED" ? "ok" : sub.status === "REJECTED" || sub.status === "FAILED" ? "danger" : "warn"}`}>
+                    {sub.status.toLowerCase()}
+                  </span>
+                </td>
+                <td style={{ fontSize: 12, color: "var(--text-secondary)", maxWidth: 280, wordBreak: "break-word" }}>
+                  {sub.notes || sub.reviewNotes || "Manual review pending."}
+                </td>
+                <td style={{ fontSize: 12 }}>{sub.createdAt.toLocaleDateString()}</td>
+              </tr>
+            ))}
+            {!submissions.length && (
+              <tr>
+                <td className="empty" colSpan={5}>{localT.empty}</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </>
+  );
+}
+
+>>>>>>> alex

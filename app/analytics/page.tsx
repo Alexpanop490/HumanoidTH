@@ -4,7 +4,10 @@ import { cookies } from "next/headers";
 import { getTranslation } from "@/lib/translations";
 import AnalyticsPlayground from "./AnalyticsPlayground";
 import AnalyticsBpmn from "./AnalyticsBpmn";
+<<<<<<< HEAD
 import SynergyTabs from "@/app/components/Synergytabs/synergytabs";
+=======
+>>>>>>> alex
 
 export const dynamic = "force-dynamic";
 
@@ -34,7 +37,11 @@ export const metadata: Metadata = {
     description: "Statistical breakdown and charts tracking public sentiment, attention, and stance on embodied AI and robotics across Thailand.",
     images: ["/logo.png"]
   }
+<<<<<<< HEAD
 }; export default async function AnalyticsPage() {
+=======
+};export default async function AnalyticsPage() {
+>>>>>>> alex
   const cookieStore = await cookies();
   const lang = (cookieStore.get("lang")?.value || "en") as "en" | "th";
   const t = getTranslation(lang);
@@ -263,8 +270,11 @@ export const metadata: Metadata = {
 
   return (
     <>
+<<<<<<< HEAD
       <SynergyTabs />
       <div style={{ marginTop: "20px" }} />
+=======
+>>>>>>> alex
       <h1>{t.analyticsTitle}</h1>
       <p className="muted" style={{ marginBottom: "18px" }}>{t.analyticsDesc}</p>
       <div className="notice">This workspace uses live database rows only. No sample data is injected here.</div>

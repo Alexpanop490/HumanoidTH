@@ -32,6 +32,7 @@ def render(request: Request, template: str, **context):
     return templates.TemplateResponse(request, template, base)
 
 
+<<<<<<< HEAD
 ALLOWED_TABLES = {
     "sources": "sources",
     "robot_models": "robot_models",
@@ -42,6 +43,8 @@ ALLOWED_TABLES = {
 }
 
 
+=======
+>>>>>>> alex
 def create_app() -> FastAPI:
     init_db()
     app = FastAPI(title=get_settings().project_name)
@@ -92,6 +95,7 @@ def create_app() -> FastAPI:
 
     @app.get("/database")
     def database(request: Request, table: str = "sources", q: str = ""):
+<<<<<<< HEAD
         table_name = ALLOWED_TABLES.get(table, "sources")
         allowed = sorted(ALLOWED_TABLES)
         query = "SELECT * FROM " + table_name
@@ -111,11 +115,33 @@ def create_app() -> FastAPI:
     def database_export(table: str = "sources"):
         table_name = ALLOWED_TABLES.get(table, "sources")
         data = rows("SELECT * FROM " + table_name)
+=======
+        allowed = {"sources", "robot_models", "owned_inventory", "contributions", "perspective_annotations", "submitted_data"}
+        table = table if table in allowed else "sources"
+        where = ""
+        params: tuple = ()
+        if q:
+            where = "WHERE " + ("title LIKE ? OR url LIKE ?" if table in {"sources", "submitted_data"} else "CAST(id AS TEXT) LIKE ?")
+            params = (f"%{q}%", f"%{q}%") if table in {"sources", "submitted_data"} else (f"%{q}%",)
+        data = rows(f"SELECT * FROM {table} {where} ORDER BY id DESC LIMIT 250", params)
+        return render(request, "database.html", table=table, q=q, rows=data, allowed=sorted(allowed))
+
+    @app.get("/database/export.csv")
+    def database_export(table: str = "sources"):
+        allowed = {"sources", "robot_models", "owned_inventory", "contributions", "perspective_annotations", "submitted_data"}
+        if table not in allowed:
+            table = "sources"
+        data = rows(f"SELECT * FROM {table}")
+>>>>>>> alex
         headers = list(data[0].keys()) if data else ["empty"]
         lines = [",".join(headers)]
         for row in data:
             lines.append(",".join(str(row.get(h, "")).replace(",", " ") for h in headers))
+<<<<<<< HEAD
         return StreamingResponse(iter(["\n".join(lines)]), media_type="text/csv", headers={"Content-Disposition": f"attachment; filename={table_name}.csv"})
+=======
+        return StreamingResponse(iter(["\n".join(lines)]), media_type="text/csv", headers={"Content-Disposition": f"attachment; filename={table}.csv"})
+>>>>>>> alex
 
     @app.get("/submit-data")
     def submit_data(request: Request):

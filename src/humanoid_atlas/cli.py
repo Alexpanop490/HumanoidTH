@@ -79,11 +79,18 @@ def github(query: str = typer.Option(..., "--query"), limit: int = 25) -> None:
 @filter_app.command("relevance")
 def filter_relevance(pending: bool = False) -> None:
     init_db()
+<<<<<<< HEAD
     updated = 0
     query = "SELECT id,title,excerpt FROM sources WHERE relevance_status = ?" if pending else "SELECT id,title,excerpt FROM sources"
     params: tuple[str, ...] | tuple[()] = ("pending",) if pending else ()
     with connect() as conn:
         rows = conn.execute(query, params).fetchall()
+=======
+    where = "WHERE relevance_status='pending'" if pending else ""
+    updated = 0
+    with connect() as conn:
+        rows = conn.execute(f"SELECT id,title,excerpt FROM sources {where}").fetchall()
+>>>>>>> alex
         for row in rows:
             result = classify_text(row["title"], row["excerpt"])
             conn.execute(
@@ -97,6 +104,7 @@ def filter_relevance(pending: bool = False) -> None:
 @analyze_app.command("perspectives")
 def analyze_perspectives(pending: bool = False) -> None:
     init_db()
+<<<<<<< HEAD
     query = """
         SELECT s.id,title,excerpt FROM sources s
         LEFT JOIN perspective_annotations pa ON pa.source_id=s.id
@@ -108,6 +116,20 @@ def analyze_perspectives(pending: bool = False) -> None:
     created = 0
     with connect() as conn:
         rows = conn.execute(query, params).fetchall()
+=======
+    where = "WHERE s.relevance_status='accepted'"
+    if pending:
+        where += " AND pa.id IS NULL"
+    created = 0
+    with connect() as conn:
+        rows = conn.execute(
+            f"""
+            SELECT s.id,title,excerpt FROM sources s
+            LEFT JOIN perspective_annotations pa ON pa.source_id=s.id
+            {where}
+            """
+        ).fetchall()
+>>>>>>> alex
     for row in rows:
         annotation = annotate(row["title"], row["excerpt"]).model_dump()
         insert_perspective(row["id"], annotation)
@@ -141,11 +163,18 @@ def export_csv(table: str = typer.Option(..., "--table"), out: Path = typer.Opti
     if table not in allowed:
         raise typer.BadParameter(f"Table must be one of {sorted(allowed)}")
     out.mkdir(parents=True, exist_ok=True)
+<<<<<<< HEAD
     table_name = table
     with connect() as conn:
         df = pd.read_sql_query("SELECT * FROM " + table_name, conn)
     csv_path = out / f"{table_name}.csv"
     xlsx_path = out / f"{table_name}.xlsx"
+=======
+    with connect() as conn:
+        df = pd.read_sql_query(f"SELECT * FROM {table}", conn)
+    csv_path = out / f"{table}.csv"
+    xlsx_path = out / f"{table}.xlsx"
+>>>>>>> alex
     df.to_csv(csv_path, index=False)
     df.to_excel(xlsx_path, index=False)
     typer.echo({"csv": str(csv_path), "xlsx": str(xlsx_path), "rows": len(df)})
