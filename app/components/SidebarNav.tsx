@@ -52,6 +52,7 @@ export default function SidebarNav({ currentLang = "en" }: SidebarNavProps) {
         const isActive = item.href === "/admin" ? pathname.startsWith("/admin") : pathname === item.href;
         return (
 <<<<<<< HEAD
+<<<<<<< HEAD
           <Link
             key={item.href}
             href={item.href}
@@ -60,6 +61,11 @@ export default function SidebarNav({ currentLang = "en" }: SidebarNavProps) {
             key={item.href} 
             href={item.href} 
 >>>>>>> alex
+=======
+          <Link
+            key={item.href}
+            href={item.href}
+>>>>>>> bfc6eae (this is a update)
             className={isActive ? "active" : ""}
           >
             <Icon size={17} aria-hidden="true" />

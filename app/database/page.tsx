@@ -106,6 +106,7 @@ export default async function DatabasePage({ searchParams }: { searchParams: Sea
         </div>
       </div>
 
+<<<<<<< HEAD
 
 
 <<<<<<< HEAD
@@ -114,6 +115,10 @@ export default async function DatabasePage({ searchParams }: { searchParams: Sea
 =======
       <style dangerouslySetInnerHTML={{ __html: `
 >>>>>>> alex
+=======
+      <style dangerouslySetInnerHTML={{
+        __html: `
+>>>>>>> bfc6eae (this is a update)
         .db-form {
           display: grid;
           grid-template-columns: 1fr 2fr 100px;
@@ -156,10 +161,13 @@ export default async function DatabasePage({ searchParams }: { searchParams: Sea
           Table Preview: <code>{table}</code> ({data.length} records)
         </h2>
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
         
 >>>>>>> alex
+=======
+>>>>>>> bfc6eae (this is a update)
         <div className="table-wrap" style={{ border: "1px solid var(--border)", borderRadius: "4px" }}>
           <table style={{ fontFamily: "monospace", fontSize: "11px", whiteSpace: "nowrap" }}>
             <thead>

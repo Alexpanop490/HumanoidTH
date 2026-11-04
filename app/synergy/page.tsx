@@ -1,7 +1,14 @@
+<<<<<<< HEAD
 import { cookies } from "next/dist/server/request/cookies";
 import styles from "./decorate.module.css";
 import { getTranslation } from "@/lib/translations";
 import SynergyTabs from "/app/components/Synergytabs/synergytabs";
+=======
+import { cookies } from "next/headers";
+import styles from "./decorate.module.css";
+import { getTranslation } from "@/lib/translations";
+import SynergyTabs from "@/app/components/Synergytabs/synergytabs";
+>>>>>>> bfc6eae (this is a update)
 
 
 const Synergy = async () => {

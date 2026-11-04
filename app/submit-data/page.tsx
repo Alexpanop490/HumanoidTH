@@ -33,12 +33,18 @@ export const metadata: Metadata = {
     images: ["/logo.png"]
   }
 <<<<<<< HEAD
+<<<<<<< HEAD
 };
 
 const copy = {
 =======
 };const copy = {
 >>>>>>> alex
+=======
+};
+
+const copy = {
+>>>>>>> bfc6eae (this is a update)
   en: {
     accountTitle: "Create an account to submit data",
     accountText: "Submissions are connected to your profile so you can track review status and show your contribution history to the community.",
@@ -262,5 +268,8 @@ export default async function SubmitDataPage() {
     </>
   );
 }
+<<<<<<< HEAD
 
 >>>>>>> alex
+=======
+>>>>>>> bfc6eae (this is a update)
