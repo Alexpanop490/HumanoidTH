@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Submit Data</h1>
+<form class="form" method="post">
+  <label>Type<select name="submission_type"><option>source_url</option><option>robot_model</option><option>owned_inventory_update</option><option>contribution_claim</option><option>event_demo_record</option><option>correction_request</option></select></label>
+  <label>Title<input name="title" required></label>
+  <label>URL<input name="url" type="url"></label>
+  <label>Notes<textarea name="notes" rows="5"></textarea></label>
+  <label>Name<input name="submitter_name"></label>
+  <label>Contact<input name="submitter_contact"></label>
+  <button class="primary" type="submit">Submit for review</button>
+</form>
+{% endblock %}

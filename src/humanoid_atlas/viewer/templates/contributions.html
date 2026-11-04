@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Contributions</h1>
+<div class="table-wrap"><table>
+<thead><tr><th>Title</th><th>Type</th><th>Contributor</th><th>Organization</th><th>License</th><th>Status</th></tr></thead>
+<tbody>
+{% for item in items %}
+<tr><td><a href="{{ item.source_url }}">{{ item.title }}</a></td><td>{{ item.contribution_type }}</td><td>{{ item.contributor_name or "" }}</td><td>{{ item.organization or "" }}</td><td>{{ item.license or "" }}</td><td>{{ item.verification_status }}</td></tr>
+{% else %}<tr><td colspan="6" class="empty">No contribution records.</td></tr>{% endfor %}
+</tbody></table></div>
+{% endblock %}

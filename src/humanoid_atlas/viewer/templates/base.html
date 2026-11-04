@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ settings.project_name }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', path='/styles.css') }}">
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">Thailand Humanoid Atlas</div>
+      <nav class="nav" aria-label="Primary">
+        <a href="/">Overview</a>
+        <a href="/perspectives">Perspectives</a>
+        <a href="/robots">Robots</a>
+        <a href="/inventory">Inventory</a>
+        <a href="/contributions">Contributions</a>
+        <a href="/analytics">Analytics</a>
+        <a href="/database">Database</a>
+        <a href="/submit-data">Submit</a>
+        <a href="/admin">Admin</a>
+      </nav>
+    </aside>
+    <main class="main">
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+</body>
+</html>

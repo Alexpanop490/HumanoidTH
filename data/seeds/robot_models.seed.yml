@@ -1,0 +1,98 @@
+robot_models:
+  - canonical_name: Dinsaw Robot
+    manufacturer: CT Asia Robotics
+    developer_org: CT Asia Robotics
+    country_of_origin: Thailand
+    robot_type: eldercare_robot
+    embodiment_level: mobile_base_with_screen
+    primary_use_case: eldercare and hospital assistance
+    thailand_status: developed_in_thailand
+    status_confidence: 0.7
+    description: Thai eldercare and service robot seed record requiring source verification.
+    source_meta: {evidence_note: "Curated seed; verify against public CT Asia and media sources."}
+  - canonical_name: Dinsaw Mini Home AI
+    manufacturer: CT Asia Robotics
+    developer_org: CT Asia Robotics
+    country_of_origin: Thailand
+    robot_type: companion_robot
+    embodiment_level: tabletop_social_robot
+    primary_use_case: home companion and eldercare
+    thailand_status: developed_in_thailand
+    status_confidence: 0.65
+    description: Home companion robot seed record requiring current verification.
+    source_meta: {evidence_note: "Curated seed; do not treat as exhaustive."}
+  - canonical_name: NAO
+    manufacturer: SoftBank Robotics
+    country_of_origin: France
+    robot_type: humanoid_full_body
+    embodiment_level: full_body_humanoid
+    primary_use_case: education and HRI research
+    thailand_status: observed_in_thailand
+    status_confidence: 0.45
+    description: Imported humanoid platform often used in education and research; Thailand-specific usage requires record evidence.
+    source_meta: {evidence_note: "Imported platform seed; link to Thai deployment sources when verified."}
+  - canonical_name: Pepper
+    manufacturer: SoftBank Robotics
+    country_of_origin: Japan
+    robot_type: social_robot
+    embodiment_level: mobile_base_with_screen
+    primary_use_case: service interaction and exhibition demos
+    thailand_status: observed_in_thailand
+    status_confidence: 0.45
+    description: Social robot platform seed for Thailand event or service-use verification.
+    source_meta: {evidence_note: "Imported platform seed; needs Thai source evidence."}
+  - canonical_name: Unitree G1
+    manufacturer: Unitree Robotics
+    country_of_origin: China
+    robot_type: humanoid_full_body
+    embodiment_level: full_body_humanoid
+    primary_use_case: embodied AI and humanoid robotics research
+    thailand_status: tested_by_project
+    status_confidence: 0.4
+    description: Humanoid platform seed for project/team testing records; inventory remains private unless marked public-safe.
+    source_meta: {evidence_note: "Project-facing placeholder; avoid public inventory claims without review."}
+  - canonical_name: UBTECH Walker
+    manufacturer: UBTECH Robotics
+    country_of_origin: China
+    robot_type: humanoid_full_body
+    embodiment_level: full_body_humanoid
+    primary_use_case: humanoid service demonstrations
+    thailand_status: rumored_unverified
+    status_confidence: 0.25
+    description: Imported humanoid platform candidate; Thailand status is unverified until evidence is added.
+    source_meta: {evidence_note: "Unverified seed for taxonomy testing."}
+  - canonical_name: Hospital Delivery Service Robot
+    developer_org: Thai hospital or university partner
+    country_of_origin: Thailand
+    robot_type: hospital_service_robot
+    embodiment_level: mobile_base_with_screen
+    primary_use_case: hospital delivery and patient-facing service
+    thailand_status: deployed_in_thailand
+    status_confidence: 0.45
+    description: Generic registry placeholder for verified Thai hospital service robot records.
+    source_meta: {evidence_note: "Replace with named model when source evidence is reviewed."}
+  - canonical_name: Thai University Social Robot Prototype
+    developer_org: Thai university lab
+    country_of_origin: Thailand
+    robot_type: research_prototype
+    embodiment_level: mixed_or_unclear
+    primary_use_case: HRI research and education
+    thailand_status: developed_in_thailand
+    status_confidence: 0.4
+    description: Placeholder for Thai university social robotics prototypes pending curated sources.
+    source_meta: {evidence_note: "Use as a seed bucket only; split into verified models later."}
+contributions:
+  - title: Thai HRI research seed
+    contribution_type: research_paper
+    contributor_type: research_group
+    organization: Thai university lab
+    description: Placeholder contribution for Thai human-robot interaction research.
+    source_url: seed:contribution:thai-hri-research
+    verification_status: pending
+  - title: Hospital robot deployment field observation seed
+    contribution_type: field_observation
+    contributor_type: project_team
+    organization: CreativeLabTH
+    description: Placeholder for reviewed field observation notes about hospital robot deployment.
+    source_url: seed:contribution:hospital-field-observation
+    verification_status: pending

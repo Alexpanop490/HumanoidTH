@@ -1,0 +1,65 @@
+robot_type:
+  - humanoid_full_body
+  - humanoid_upper_body
+  - social_robot
+  - companion_robot
+  - eldercare_robot
+  - hospital_service_robot
+  - education_robot
+  - telepresence_robot
+  - entertainment_robot
+  - research_prototype
+  - industrial_humanoid
+  - service_robot_nonhumanoid
+  - unknown
+embodiment_level:
+  - full_body_humanoid
+  - torso_or_bust
+  - mobile_base_with_screen
+  - tabletop_social_robot
+  - software_only_simulation
+  - mixed_or_unclear
+perspective_theme:
+  - healthcare_and_eldercare_trust
+  - job_displacement
+  - human_robot_collaboration
+  - education_and_learning
+  - national_innovation
+  - entertainment_and_novelty
+  - privacy_and_surveillance
+  - safety_and_reliability
+  - cultural_acceptance
+  - accessibility_and_inclusion
+  - cost_and_affordability
+  - ethics_and_identity
+  - unclear
+stance: [supportive, cautious_supportive, neutral, skeptical, opposed, humorous_or_memetic, unclear]
+sentiment: [positive, mixed, neutral, negative, unclear]
+contribution_type:
+  - research_paper
+  - software_repository
+  - hardware_design
+  - dataset
+  - demo_or_exhibition
+  - workshop_or_course
+  - media_analysis
+  - field_observation
+  - translation_or_documentation
+  - repair_or_maintenance
+  - robot_deployment
+  - student_project
+  - policy_or_report
+  - other
+thailand_status:
+  - developed_in_thailand
+  - deployed_in_thailand
+  - imported_to_thailand
+  - observed_in_thailand
+  - owned_by_project
+  - tested_by_project
+  - used_in_event
+  - rumored_unverified
+  - retired_or_inactive
+  - unknown
+source_type: [seed_yaml, rss, gdelt, youtube, openalex, github, manual_social, submission, web]
+confidence_bucket: [high, medium, low, unverified]

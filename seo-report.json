@@ -1,0 +1,49 @@
+{
+  "timestamp": "2026-07-04T20:02:39.277Z",
+  "score": 82,
+  "isDryRun": false,
+  "summary": {
+    "totalIssues": 4,
+    "highSeverity": 0,
+    "mediumSeverity": 2,
+    "lowSeverity": 2
+  },
+  "issues": [
+    {
+      "filePath": "app/admin-login/page.tsx",
+      "pageName": "Admin Login",
+      "category": "html",
+      "message": "Missing h1 heading element",
+      "severity": "medium",
+      "suggestedFix": "Add exactly one clear <h1> tag introducing the page contents",
+      "isAutoFixable": false
+    },
+    {
+      "filePath": "app/admin-login/page.tsx",
+      "pageName": "Admin Login",
+      "category": "metadata",
+      "message": "Metadata title length is suboptimal: 'Admin Login' (11 chars)",
+      "severity": "low",
+      "suggestedFix": "Optimize title tag to be between 20 and 65 characters",
+      "isAutoFixable": true
+    },
+    {
+      "filePath": "app/admin/page.tsx",
+      "pageName": "Admin Review Console",
+      "category": "html",
+      "message": "Missing h1 heading element",
+      "severity": "medium",
+      "suggestedFix": "Add exactly one clear <h1> tag introducing the page contents",
+      "isAutoFixable": false
+    },
+    {
+      "filePath": "app/admin/cms/page.tsx",
+      "pageName": "Admin CMS",
+      "category": "metadata",
+      "message": "Metadata title length is suboptimal: 'Admin CMS' (9 chars)",
+      "severity": "low",
+      "suggestedFix": "Optimize title tag to be between 20 and 65 characters",
+      "isAutoFixable": true
+    }
+  ]
+}

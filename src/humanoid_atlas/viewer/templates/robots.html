@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Robot Model Registry</h1>
+<div class="cards">
+{% for item in items %}
+  <article class="card">
+    <h2>{{ item.canonical_name }}</h2>
+    <p class="muted">{{ item.description or "No description yet." }}</p>
+    <p><span class="badge">{{ item.robot_type }}</span> <span class="badge">{{ item.thailand_status }}</span></p>
+    <p><strong>{{ item.manufacturer or item.developer_org or "Unknown developer" }}</strong><br>{{ item.primary_use_case or "Use case unclassified" }}</p>
+    {% if item.official_url %}<a href="{{ item.official_url }}">Source evidence</a>{% endif %}
+  </article>
+{% else %}
+  <div class="empty">No robot models. Run seed ingest.</div>
+{% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Admin Review Queue</h1>
+{% if not admin_mode %}<div class="notice">Public review view. Add <code>?admin=1</code> in local mode to reveal admin actions.</div>{% endif %}
+<div class="split">
+  <div class="table-wrap"><table><thead><tr><th>Submitted</th><th>Type</th><th>Status</th><th>Actions</th></tr></thead><tbody>
+  {% for item in items %}
+  <tr><td><strong>{{ item.title }}</strong><br><span class="muted">{{ item.url or item.notes }}</span></td><td>{{ item.submission_type }}</td><td>{{ item.status }}</td><td>
+    {% if admin_mode %}
+    <form method="post" action="/admin/{{ item.id }}/approve" style="display:inline"><button>Approve</button></form>
+    <form method="post" action="/admin/{{ item.id }}/reject" style="display:inline"><button>Reject</button></form>
+    <form method="post" action="/admin/{{ item.id }}/needs-info" style="display:inline"><button>Needs info</button></form>
+    {% else %}<span class="muted">Hidden</span>{% endif %}
+  </td></tr>
+  {% else %}<tr><td colspan="4" class="empty">No pending submissions.</td></tr>{% endfor %}
+  </tbody></table></div>
+  <aside class="panel"><h2>Review Rules</h2><p>Confirm source evidence, privacy, taxonomy labels, and duplicate risk before publishing.</p></aside>
+</div>
+{% endblock %}

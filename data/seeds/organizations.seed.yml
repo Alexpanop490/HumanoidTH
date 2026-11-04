@@ -1,0 +1,31 @@
+organizations:
+  - name: CT Asia Robotics
+    organization_type: company
+    country: Thailand
+    description: Thai robotics company seed associated with Dinsaw records; verify current public details before publishing claims.
+    source_url: seed:organization:ct-asia-robotics
+  - name: King Chulalongkorn Memorial Hospital
+    organization_type: hospital
+    country: Thailand
+    description: Seed organization for medical robot deployment records requiring source-level verification.
+    source_url: seed:organization:king-chulalongkorn-memorial-hospital
+  - name: True Digital
+    organization_type: company
+    country: Thailand
+    description: Seed organization for physical AI and robotics partnership records requiring source-level verification.
+    source_url: seed:organization:true-digital
+  - name: Chulalongkorn University
+    organization_type: university
+    country: Thailand
+    description: Seed university for Thai robotics and HRI records.
+    source_url: seed:organization:chulalongkorn-university
+  - name: Mahidol University
+    organization_type: university
+    country: Thailand
+    description: Seed university for health, aging, and robotics-related research records.
+    source_url: seed:organization:mahidol-university
+  - name: CreativeLabTH
+    organization_type: project_team
+    country: Thailand
+    description: Internal/project team organization for private owned inventory and reviewed contributions.
+    source_url: seed:organization:creativelabth

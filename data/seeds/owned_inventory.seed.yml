@@ -1,0 +1,27 @@
+owned_inventory:
+  - robot_model: Unitree G1
+    display_name: Project Humanoid Test Unit A
+    ownership_status: planned
+    owner_org: CreativeLabTH
+    custodian: Internal robotics operator
+    location_label: Private lab storage
+    serial_number: PRIVATE-DO-NOT-PUBLISH
+    public_serial_safe: false
+    condition_status: planned
+    accessories: []
+    documentation_links: []
+    visibility: private
+    notes: Private placeholder. Replace with real team inventory only after review.
+  - robot_model: NAO
+    display_name: Education Humanoid Reference Unit
+    ownership_status: planned
+    owner_org: CreativeLabTH
+    custodian: Internal robotics operator
+    location_label: Private lab storage
+    serial_number: PRIVATE-DO-NOT-PUBLISH
+    public_serial_safe: false
+    condition_status: planned
+    accessories: []
+    documentation_links: []
+    visibility: private
+    notes: Public views must hide serial, exact location, purchase documents, and sensitive repair notes.

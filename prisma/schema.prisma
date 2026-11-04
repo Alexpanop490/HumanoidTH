@@ -1,0 +1,252 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum SourceType {
+  SEED
+  RSS
+  GDELT
+  YOUTUBE
+  OPENALEX
+  GITHUB
+  MANUAL_SOCIAL
+  SUBMISSION
+  WEB
+}
+
+enum RelevanceStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  UNCERTAIN
+}
+
+enum ReviewStatus {
+  QUEUED
+  FETCHING
+  ANALYZED
+  NEEDS_REVIEW
+  APPROVED
+  REJECTED
+  FAILED
+}
+
+enum UserRole {
+  USER
+  RESEARCHER
+  ADMIN
+}
+
+enum PullStatus {
+  QUEUED
+  RUNNING
+  SUCCEEDED
+  FAILED
+  SKIPPED_MISSING_KEY
+}
+
+model User {
+  id              String          @id @default(cuid())
+  email           String          @unique
+  name            String?
+  role            UserRole        @default(USER)
+  submissions     SubmittedData[]
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+}
+
+model SourceRecord {
+  id                  String                  @id @default(cuid())
+  sourceType          SourceType
+  title               String
+  url                 String                  @unique
+  excerpt             String                  @default("")
+  publishedAt         DateTime?
+  author              String?
+  platform            String?
+  rawMeta             Json                    @default("{}")
+  relevanceStatus     RelevanceStatus         @default(PENDING)
+  relevanceReason     String?
+  relevanceConfidence Float                   @default(0)
+  annotations         PerspectiveAnnotation[]
+  triplets            Triplet[]
+  createdAt           DateTime                @default(now())
+  updatedAt           DateTime                @updatedAt
+
+  @@index([sourceType])
+  @@index([relevanceStatus])
+  @@index([publishedAt])
+}
+
+model RobotModel {
+  id                String         @id @default(cuid())
+  canonicalName     String         @unique
+  manufacturer      String?
+  developerOrg      String?
+  countryOfOrigin   String?
+  robotType         String         @default("unknown")
+  embodimentLevel   String?
+  primaryUseCase    String?
+  thailandStatus    String         @default("observed_in_thailand")
+  statusConfidence  Float          @default(0.5)
+  officialUrl       String?
+  description       String?
+  sourceMeta        Json           @default("{}")
+  firstSeenYear     Int?
+  lastVerifiedAt    DateTime?
+  contributions     Contribution[]
+  inventory         OwnedInventory[]
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+
+  @@index([robotType])
+  @@index([thailandStatus])
+}
+
+model Entity {
+  id           String   @id @default(cuid())
+  name         String
+  entityType   String
+  canonicalKey String   @unique
+  sourceMeta   Json     @default("{}")
+  createdAt    DateTime @default(now())
+
+  @@index([entityType])
+}
+
+model Contribution {
+  id                  String      @id @default(cuid())
+  contributorName     String?
+  contributorType     String?
+  organization        String?
+  contributionType    String
+  title               String
+  description         String?
+  relatedRobotModelId String?
+  relatedRobotModel   RobotModel? @relation(fields: [relatedRobotModelId], references: [id], onDelete: SetNull)
+  sourceUrl           String?     @unique
+  license             String?
+  visibility          String      @default("public")
+  verificationStatus  ReviewStatus @default(NEEDS_REVIEW)
+  createdAt           DateTime    @default(now())
+  updatedAt           DateTime    @updatedAt
+
+  @@index([contributionType])
+  @@index([verificationStatus])
+}
+
+model PerspectiveAnnotation {
+  id                String       @id @default(cuid())
+  sourceId          String
+  source            SourceRecord @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+  stance            String       @default("unclear")
+  sentiment         String       @default("unclear")
+  perspectiveTheme  String       @default("unclear")
+  targetEntity      String       @default("humanoid/social robotics")
+  evidenceExcerpt   String       @default("")
+  confidence        Float        @default(0.5)
+  method            String
+  createdAt         DateTime     @default(now())
+
+  @@unique([sourceId, perspectiveTheme, targetEntity, evidenceExcerpt])
+  @@index([perspectiveTheme])
+}
+
+model Triplet {
+  id         String        @id @default(cuid())
+  subject    String
+  relation   String
+  object     String
+  confidence Float         @default(0.5)
+  sourceId   String?
+  source     SourceRecord? @relation(fields: [sourceId], references: [id], onDelete: SetNull)
+  createdAt  DateTime      @default(now())
+
+  @@unique([subject, relation, object, sourceId])
+  @@index([relation])
+}
+
+model StatsCache {
+  key       String   @id
+  valueJson Json
+  updatedAt DateTime @updatedAt
+}
+
+model SubmittedData {
+  id               String       @id @default(cuid())
+  submissionType   String
+  title            String
+  url              String?
+  payloadJson      Json         @default("{}")
+  notes            String?
+  submitterName    String?
+  submitterContact String?
+  status           ReviewStatus @default(QUEUED)
+  reviewNotes      String?
+  submittedById    String?
+  submittedBy      User?        @relation(fields: [submittedById], references: [id], onDelete: SetNull)
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  @@index([status])
+  @@index([submissionType])
+}
+
+model PipelineRun {
+  id           String     @id @default(cuid())
+  pipelineName String
+  status       PullStatus
+  startedAt    DateTime   @default(now())
+  finishedAt   DateTime?
+  detailsJson  Json       @default("{}")
+
+  @@index([pipelineName])
+  @@index([status])
+}
+
+model SourcePullJob {
+  id           String     @id @default(cuid())
+  adapter      SourceType
+  query        String
+  status       PullStatus @default(QUEUED)
+  recordsFound Int        @default(0)
+  recordsSaved Int        @default(0)
+  errorMessage String?
+  startedAt    DateTime?
+  finishedAt   DateTime?
+  createdAt    DateTime   @default(now())
+
+  @@index([adapter])
+  @@index([status])
+}
+
+model OwnedInventory {
+  id                 String      @id @default(cuid())
+  robotModelId       String?
+  robotModel         RobotModel? @relation(fields: [robotModelId], references: [id], onDelete: SetNull)
+  displayName        String
+  ownershipStatus    String
+  ownerOrg           String?
+  custodian          String?
+  locationLabel      String?
+  serialNumber       String?
+  publicSerialSafe   Boolean     @default(false)
+  acquisitionDate    DateTime?
+  acquisitionSource  String?
+  conditionStatus    String?
+  firmwareVersion    String?
+  accessories        Json        @default("[]")
+  documentationLinks Json        @default("[]")
+  visibility         String      @default("private")
+  notes              String?
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
+
+  @@index([robotModelId])
+}

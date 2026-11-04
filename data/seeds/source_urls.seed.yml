@@ -1,0 +1,51 @@
+sources:
+  - title: Dinsaw robot in Thailand eldercare media seed
+    url: seed:source:dinsaw-eldercare-media
+    source_type: seed_yaml
+    platform: curated_seed
+    excerpt: Dinsaw robot Thailand hospital eldercare service robot public media discussion seed.
+  - title: Thai hospital service robot deployment seed
+    url: seed:source:thai-hospital-service-robot
+    source_type: seed_yaml
+    platform: curated_seed
+    excerpt: Thailand hospital robot service deployment patient support healthcare trust seed.
+  - title: Bangkok humanoid robot exhibition seed
+    url: seed:source:bangkok-humanoid-exhibition
+    source_type: seed_yaml
+    platform: curated_seed
+    excerpt: Bangkok exhibition humanoid robot demo entertainment novelty and national innovation seed.
+  - title: Thai university social robot project seed
+    url: seed:source:thai-university-social-robot
+    source_type: seed_yaml
+    platform: curated_seed
+    excerpt: Thai university social robot education student HRI research seed.
+  - title: Robot job displacement discussion in Thailand seed
+    url: seed:source:robot-job-displacement-thailand
+    source_type: seed_yaml
+    platform: curated_seed
+    excerpt: Public media discussion about robot automation replace jobs in Thailand service sector with cautious support.
+  - title: Privacy concern around service robots seed
+    url: seed:source:thai-service-robot-privacy
+    source_type: seed_yaml
+    platform: curated_seed
+    excerpt: Thailand service robot camera privacy surveillance concern seed.
+  - title: Thai robotics startup innovation seed
+    url: seed:source:thai-robotics-startup-innovation
+    source_type: seed_yaml
+    platform: curated_seed
+    excerpt: Thai robotics startup humanoid service robot innovation support seed.
+  - title: Elderly care companion robot Thailand seed
+    url: seed:source:elderly-care-companion-thailand
+    source_type: seed_yaml
+    platform: curated_seed
+    excerpt: Companion robot Thailand elderly care assist improve home support seed.
+  - title: School robot learning demo Thailand seed
+    url: seed:source:school-robot-learning-thailand
+    source_type: seed_yaml
+    platform: curated_seed
+    excerpt: Thailand school education robot learning student demo seed.
+  - title: Unclear AI robot article seed
+    url: seed:source:unclear-ai-robot
+    source_type: seed_yaml
+    platform: curated_seed
+    excerpt: AI robot article may refer to chatbot only with no embodied robot evidence.

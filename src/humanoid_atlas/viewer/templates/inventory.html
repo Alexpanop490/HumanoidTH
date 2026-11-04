@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="topline"><h1>Owned Inventory</h1><div class="toolbar"><a class="btn" href="/inventory?mode=operator">Operator</a><a class="btn" href="/inventory?mode=public">Public-safe</a></div></div>
+{% if public_mode %}<div class="notice">Public-safe mode hides serial numbers, exact storage location, purchase documents, and sensitive repair notes.</div>{% endif %}
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Display</th><th>Model</th><th>Status</th><th>Condition</th><th>Custody</th><th>Visibility</th><th>Notes</th></tr></thead>
+  <tbody>
+  {% for item in items %}
+    <tr>
+      <td>{{ item.display_name }}</td>
+      <td>{{ item.robot_model or "Unlinked" }}</td>
+      <td>{{ item.ownership_status }}</td>
+      <td>{{ item.condition_status or "Unknown" }}</td>
+      <td>{% if public_mode %}{{ item.owner_org or "Project team" }}{% else %}{{ item.custodian or "" }} {{ item.location_label or "" }} {{ item.serial_number or "" }}{% endif %}</td>
+      <td><span class="badge {{ 'private' if item.visibility == 'private' else 'safe' }}">{{ item.visibility }}</span></td>
+      <td>{% if public_mode and item.visibility != "public" %}<span class="muted">Private details hidden</span>{% else %}{{ item.notes or "" }}{% endif %}</td>
+    </tr>
+  {% else %}
+    <tr><td colspan="7" class="empty">No inventory records. Defaults are private when added.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}

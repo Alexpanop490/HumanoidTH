@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Analytics</h1>
+<div class="notice">Method note: media trends and correlations are descriptive signals, not causal claims.</div>
+<section class="grid">
+{% for row in stats.perspective_themes %}
+  <div class="panel"><div class="muted">{{ row.perception_theme }}</div><div class="stat">{{ row.count }}</div></div>
+{% else %}
+  <div class="panel">Insufficient perspective data.</div>
+{% endfor %}
+</section>
+<h2>Graph Summary</h2>
+<pre class="panel">{{ graph }}</pre>
+{% endblock %}

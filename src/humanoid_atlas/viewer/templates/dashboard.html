@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="topline">
+  <div>
+    <h1>Corpus Summary</h1>
+    <div class="muted">Research atlas for observed media signals, robot models, contributions, and private-safe owned inventory.</div>
+  </div>
+  <div class="toolbar">
+    <a class="btn primary" href="/perspectives">Explore perspectives</a>
+    <a class="btn" href="/robots">Browse robots</a>
+    <a class="btn" href="/submit-data">Add source</a>
+  </div>
+</div>
+<section class="grid">
+  <div class="panel"><div class="muted">Sources</div><div class="stat">{{ stats.sources }}</div></div>
+  <div class="panel"><div class="muted">Accepted</div><div class="stat">{{ stats.accepted_sources }}</div></div>
+  <div class="panel"><div class="muted">Robot Models</div><div class="stat">{{ stats.robot_models }}</div></div>
+  <div class="panel"><div class="muted">Owned Inventory</div><div class="stat">{{ stats.owned_inventory }}</div></div>
+  <div class="panel"><div class="muted">Contributions</div><div class="stat">{{ stats.contributions }}</div></div>
+  <div class="panel"><div class="muted">Pending Review</div><div class="stat">{{ stats.pending_review }}</div></div>
+  <div class="panel"><div class="muted">Latest Pipeline</div><div class="stat">{{ latest.pipeline_name if latest else "None" }}</div></div>
+  <div class="panel"><div class="muted">Scope</div><strong>Thailand humanoid/social robotics</strong></div>
+</section>
+<div class="notice">Empty state: run <code>python -m humanoid_atlas db init</code>, seed ingest commands, then relevance/perspective analysis.</div>
+{% endblock %}

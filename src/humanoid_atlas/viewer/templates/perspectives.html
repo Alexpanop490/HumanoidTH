@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Perspectives</h1>
+<p class="muted">These are {{ label }}, not complete Thai public opinion.</p>
+<div class="split">
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Source</th><th>Theme</th><th>Stance</th><th>Sentiment</th><th>Confidence</th><th>Evidence</th></tr></thead>
+      <tbody>
+      {% for item in items %}
+        <tr>
+          <td><a href="{{ item.url }}">{{ item.title }}</a><br><span class="muted">{{ item.platform }} {{ item.published_at or "" }}</span></td>
+          <td>{{ item.perception_theme }}</td>
+          <td>{{ item.stance }}</td>
+          <td>{{ item.sentiment }}</td>
+          <td><span class="badge {{ 'warn' if item.confidence < 0.6 else 'ok' }}">{{ "%.2f"|format(item.confidence) }}</span></td>
+          <td>{{ item.evidence_excerpt }}</td>
+        </tr>
+      {% else %}
+        <tr><td colspan="6" class="empty">No annotations yet. Run <code>python -m humanoid_atlas analyze perspectives --pending</code>.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <aside class="panel"><h2>Method Note</h2><p>Rules extract stance, sentiment, theme, target, excerpt, confidence, and abstain when evidence is thin.</p></aside>
+</div>
+{% endblock %}

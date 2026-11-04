@@ -1,0 +1,30 @@
+# Thailand Humanoid Atlas
+
+The Thailand Humanoid Atlas is an open-source, community-driven research database, registry, and analysis platform tracking the humanoid, social, and service robotics ecosystem in Thailand.
+
+## What the Platform Does
+- **Robot Registry**: Catalogs humanoid models deployed, tested, or observed in Thailand, detailing specifications, Thailand status, and developer origins.
+- **Academic & Software Contributions**: Tracks publications, research papers, datasets, and GitHub repositories authored by Thai developers and institutions.
+- **Public & Media Perspectives**: Analyzes public stance and media sentiment on humanoid robots concerning safety, healthcare trust, and employment impact.
+- **Physical Inventory**: Logs custody, condition, location, and maintenance of physical humanoid units (e.g. Pepper, NAO, Dinsaw) operated under the project.
+- **Interactive Mapping**: Renders AI-clustered geolocation maps of research institutions and detailed relationship connection graphs.
+
+## Target Audience
+- Robotics researchers, embodied AI developers, students, makers, policy makers, and educators in Thailand and internationally.
+
+## Key Terminology
+- **Humanoid Robotics**: Embodied AI and service robots with human-like features or interactions.
+- **Ecosystem Contributions**: Academic research, hardware designs, software repositories, and datasets.
+- **Ecosystem Map**: Geographical clustering of robotics developments in Thailand.
+- **Relationship Graph**: Topological network mapping connections between institutions, robots, and developers.
+
+## Important Public Pages
+- Home (Overview): https://humanoid.or.th/
+- Robot Models Registry: https://humanoid.or.th/robots
+- Public Perspectives Analysis: https://humanoid.or.th/perspectives
+- Contributions Directory: https://humanoid.or.th/contributions
+- Ecosystem Map: https://humanoid.or.th/map
+- Relationship Graph: https://humanoid.or.th/network
+- Analytics Dashboard: https://humanoid.or.th/analytics
+- Submit Data: https://humanoid.or.th/submit-data
+- Physical Inventory: https://humanoid.or.th/inventory

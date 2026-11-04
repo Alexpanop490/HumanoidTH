@@ -1,0 +1,59 @@
+# Dependencies
+node_modules/
+
+# Environment and local secrets
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Next.js / Vercel build output
+.next/
+out/
+.vercel/
+tsconfig.tsbuildinfo
+generated/
+
+# Test, coverage, and temporary output
+coverage/
+playwright-report/
+test-results/
+dist-test/
+scratch/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Python caches from the legacy worker/MVP code
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Local generated atlas data. Keep data/seeds and data/taxonomy.yml trackable.
+data/processed/
+data/exports/
+data/*.log
+*.db
+*.sqlite
+*.sqlite3
+
+# Local agent/editor state
+.agents/
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+
+# Reference UI Mockups
+*humanoidth.ui/
+*humamnoidth.ui/
+name_of_huge_folder_or_file/
+name_of_huge_folder_or_file/

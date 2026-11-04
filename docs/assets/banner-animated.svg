@@ -1,0 +1,227 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 250" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradients -->
+    <linearGradient id="bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a" />
+      <stop offset="50%" stop-color="#022c22" />
+      <stop offset="100%" stop-color="#1e293b" />
+    </linearGradient>
+    
+    <!-- Neon green gradient -->
+    <linearGradient id="neon-green" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#10B981" />
+      <stop offset="100%" stop-color="#059669" />
+    </linearGradient>
+
+    <!-- Neon yellow gradient -->
+    <linearGradient id="neon-yellow" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#F59E0B" />
+      <stop offset="100%" stop-color="#EAB308" />
+    </linearGradient>
+
+    <!-- Glowing filters -->
+    <filter id="glow-green" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="6" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+
+    <filter id="glow-yellow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="6" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <style>
+    /* CSS Styles & Animations */
+    .bg {
+      fill: url(#bg-grad);
+    }
+    
+    .floating-bot {
+      animation: float 4s ease-in-out infinite;
+      transform-origin: 120px 125px;
+    }
+
+    .heart-pulse {
+      animation: pulse 2s ease-in-out infinite;
+      transform-origin: 120px 145px;
+    }
+
+    .grid-line {
+      stroke: #10B981;
+      stroke-opacity: 0.15;
+      stroke-dasharray: 5, 5;
+    }
+
+    .scanning-laser {
+      stroke: #FBBF24;
+      stroke-width: 1.5;
+      filter: url(#glow-yellow);
+      animation: scan 3s ease-in-out infinite;
+    }
+
+    .title-text {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      font-weight: 800;
+      font-size: 38px;
+      fill: #ffffff;
+      letter-spacing: 2px;
+    }
+
+    .subtitle-text {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      font-weight: 500;
+      font-size: 16px;
+      fill: #A7F3D0;
+      letter-spacing: 1px;
+    }
+
+    .node {
+      animation: nodeGlow 3s ease-in-out infinite alternate;
+    }
+
+    .node-yellow {
+      animation: nodeGlowYellow 2.5s ease-in-out infinite alternate;
+    }
+
+    /* Keyframes */
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0px) rotate(0deg);
+      }
+      50% {
+        transform: translateY(-10px) rotate(1deg);
+      }
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+        opacity: 0.8;
+      }
+      50% {
+        transform: scale(1.2);
+        opacity: 1;
+        filter: drop-shadow(0 0 8px #F59E0B);
+      }
+    }
+
+    @keyframes scan {
+      0%, 100% {
+        y1: 60px;
+        y2: 60px;
+        opacity: 0.2;
+      }
+      50% {
+        y1: 190px;
+        y2: 190px;
+        opacity: 0.9;
+      }
+    }
+
+    @keyframes nodeGlow {
+      0% {
+        r: 4px;
+        fill-opacity: 0.6;
+        filter: drop-shadow(0 0 2px #10B981);
+      }
+      100% {
+        r: 7px;
+        fill-opacity: 1;
+        filter: drop-shadow(0 0 8px #34D399);
+      }
+    }
+
+    @keyframes nodeGlowYellow {
+      0% {
+        r: 3px;
+        fill-opacity: 0.5;
+        filter: drop-shadow(0 0 1px #F59E0B);
+      }
+      100% {
+        r: 6px;
+        fill-opacity: 1;
+        filter: drop-shadow(0 0 8px #FBBF24);
+      }
+    }
+  </style>
+
+  <!-- Background Rect -->
+  <rect width="800" height="250" class="bg" rx="16" />
+
+  <!-- Constellation Nodes & Links (Ecosystem Graph Theme) -->
+  <g opacity="0.3">
+    <!-- Connections -->
+    <line x1="120" y1="125" x2="300" y2="70" stroke="#10B981" stroke-width="1" />
+    <line x1="120" y1="125" x2="250" y2="180" stroke="#EAB308" stroke-width="1" />
+    <line x1="300" y1="70" x2="420" y2="50" stroke="#10B981" stroke-width="1.5" />
+    <line x1="300" y1="70" x2="380" y2="150" stroke="#10B981" stroke-width="1" />
+    <line x1="250" y1="180" x2="380" y2="150" stroke="#EAB308" stroke-width="1" />
+    <line x1="380" y1="150" x2="520" y2="190" stroke="#10B981" stroke-width="1" />
+    <line x1="420" y1="50" x2="580" y2="80" stroke="#EAB308" stroke-width="1" />
+    <line x1="580" y1="80" x2="680" y2="60" stroke="#10B981" stroke-width="1" />
+    <line x1="580" y1="80" x2="650" y2="170" stroke="#EAB308" stroke-width="1.5" />
+    <line x1="520" y1="190" x2="650" y2="170" stroke="#10B981" stroke-width="1" />
+    <line x1="650" y1="170" x2="740" y2="120" stroke="#EAB308" stroke-width="1" />
+    <line x1="680" y1="60" x2="740" y2="120" stroke="#10B981" stroke-width="1" />
+
+    <!-- Nodes -->
+    <circle cx="300" cy="70" class="node" fill="#10B981" />
+    <circle cx="250" cy="180" class="node-yellow" fill="#EAB308" />
+    <circle cx="420" cy="50" class="node-yellow" fill="#EAB308" />
+    <circle cx="380" cy="150" class="node" fill="#10B981" />
+    <circle cx="520" cy="190" class="node-yellow" fill="#EAB308" />
+    <circle cx="580" cy="80" class="node" fill="#10B981" />
+    <circle cx="680" cy="60" class="node-yellow" fill="#EAB308" />
+    <circle cx="650" cy="170" class="node" fill="#10B981" />
+    <circle cx="740" cy="120" class="node" fill="#34D399" />
+  </g>
+
+  <!-- Abstract Humanoid Graphic (Floating) -->
+  <g class="floating-bot">
+    <!-- Outer Aura -->
+    <circle cx="120" cy="125" r="50" fill="none" stroke="#10B981" stroke-width="1" stroke-opacity="0.3" stroke-dasharray="10, 5" />
+    
+    <!-- Robot Head Outline -->
+    <rect x="85" y="85" width="70" height="70" rx="18" fill="#1e293b" stroke="#10B981" stroke-width="3" filter="url(#glow-green)" />
+    
+    <!-- Ears / Side Elements -->
+    <rect x="73" y="105" width="12" height="30" rx="4" fill="#EAB308" />
+    <rect x="155" y="105" width="12" height="30" rx="4" fill="#EAB308" />
+    
+    <!-- Antenna -->
+    <line x1="120" y1="85" x2="120" y2="65" stroke="#EAB308" stroke-width="3" />
+    <circle cx="120" cy="60" r="6" fill="#EAB308" filter="url(#glow-yellow)" />
+
+    <!-- Eyes (Sleek horizontal bars) -->
+    <rect x="98" y="105" width="18" height="6" rx="3" fill="#10B981" filter="url(#glow-green)" />
+    <rect x="124" y="105" width="18" height="6" rx="3" fill="#10B981" filter="url(#glow-green)" />
+
+    <!-- Chest Heart (Symbolizing Open Source from Heart) -->
+    <path class="heart-pulse" d="M120 145 C118 138, 110 138, 110 144 C110 150, 120 156, 120 156 C120 156, 130 150, 130 144 C130 138, 122 138, 120 145 Z" fill="#F59E0B" filter="url(#glow-yellow)" />
+  </g>
+
+  <!-- Scanning Laser Line across the face of robot -->
+  <line x1="70" y1="125" x2="170" y2="125" class="scanning-laser" />
+
+  <!-- Text and Branding -->
+  <text x="210" y="115" class="title-text">
+    <tspan fill="#10B981">THAILAND</tspan> <tspan fill="#FBBF24">HUMANOID</tspan>
+  </text>
+  <text x="210" y="155" class="title-text" font-size="32">
+    <tspan fill="#E2E8F0">ATLAS</tspan>
+  </text>
+  
+  <text x="215" y="195" class="subtitle-text">
+    🤖 OPEN-SOURCE ROBOTICS ECOSYSTEM MAP 🌱
+  </text>
+
+  <!-- Border Frame -->
+  <rect x="5" y="5" width="790" height="240" fill="none" stroke="#EAB308" stroke-opacity="0.3" stroke-width="2" rx="12" />
+</svg>
