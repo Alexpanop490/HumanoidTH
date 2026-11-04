@@ -1,4 +1,5 @@
 .container {
+<<<<<<< HEAD
     display: flex;
     flex-direction: column;
 }
@@ -9,3 +10,13 @@
     font-weight: 400;
 
 }
+=======
+  padding: 24px 0;
+}
+
+.title {
+  margin-top: 20px;
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  color: var(--text-primary);
+}
+>>>>>>> 530f334 (update ui synergy fix)
