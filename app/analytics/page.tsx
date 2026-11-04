@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 import { getTranslation } from "@/lib/translations";
 import AnalyticsPlayground from "./AnalyticsPlayground";
 import AnalyticsBpmn from "./AnalyticsBpmn";
+import SynergyTabs from "@/app/components/Synergytabs/synergytabs";
 
 export const dynamic = "force-dynamic";
 
@@ -33,7 +34,7 @@ export const metadata: Metadata = {
     description: "Statistical breakdown and charts tracking public sentiment, attention, and stance on embodied AI and robotics across Thailand.",
     images: ["/logo.png"]
   }
-};export default async function AnalyticsPage() {
+}; export default async function AnalyticsPage() {
   const cookieStore = await cookies();
   const lang = (cookieStore.get("lang")?.value || "en") as "en" | "th";
   const t = getTranslation(lang);
@@ -262,14 +263,18 @@ export const metadata: Metadata = {
 
   return (
     <>
+      <SynergyTabs />
+      <div style={{ marginTop: "20px" }} />
       <h1>{t.analyticsTitle}</h1>
       <p className="muted" style={{ marginBottom: "18px" }}>{t.analyticsDesc}</p>
       <div className="notice">This workspace uses live database rows only. No sample data is injected here.</div>
-      {dbOffline && (
-        <div className="notice" style={{ marginBottom: 16 }}>
-          Live analytics are unavailable. This page needs PostgreSQL to build the analysis workspace.
-        </div>
-      )}
+      {
+        dbOffline && (
+          <div className="notice" style={{ marginBottom: 16 }}>
+            Live analytics are unavailable. This page needs PostgreSQL to build the analysis workspace.
+          </div>
+        )
+      }
       <div className="grid" style={{ margin: "18px 0" }}>
         <div className="panel motion-panel motion-pop">
           <div className="muted">Internet Sources</div>

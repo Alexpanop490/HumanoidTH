@@ -32,7 +32,9 @@ export const metadata: Metadata = {
     description: "Help keep the Thailand Humanoid Atlas accurate. Submit new robot deployments, academic papers, source links, or physical inventory updates.",
     images: ["/logo.png"]
   }
-};const copy = {
+};
+
+const copy = {
   en: {
     accountTitle: "Create an account to submit data",
     accountText: "Submissions are connected to your profile so you can track review status and show your contribution history to the community.",
@@ -241,4 +243,3 @@ export default async function SubmitDataPage() {
     </>
   );
 }
-
