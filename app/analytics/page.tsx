@@ -34,9 +34,7 @@ export const metadata: Metadata = {
     description: "Statistical breakdown and charts tracking public sentiment, attention, and stance on embodied AI and robotics across Thailand.",
     images: ["/logo.png"]
   }
-};
-
-export default async function AnalyticsPage() {
+};export default async function AnalyticsPage() {
   const cookieStore = await cookies();
   const lang = (cookieStore.get("lang")?.value || "en") as "en" | "th";
   const t = getTranslation(lang);

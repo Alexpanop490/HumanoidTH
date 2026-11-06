@@ -52,7 +52,11 @@ export default function SidebarNav({ currentLang = "en" }: SidebarNavProps) {
         const isActive = item.href === "/admin" ? pathname.startsWith("/admin") : pathname === item.href;
 
         return (
-          <Link key={item.href} href={item.href} className={isActive ? "active" : ""}>
+          <Link 
+            key={item.href} 
+            href={item.href} 
+            className={isActive ? "active" : ""}
+          >
             <Icon size={17} aria-hidden="true" />
             <span>{item.label}</span>
           </Link>
