@@ -21,11 +21,3 @@ if __name__ == "__main__":
 
         Youtube_url = item.get('url','ไม่มีลิงก์')
         
-        ydl_opts = {
-            'format': 'bestvideo[ext=mp4]/best[ext=mp4]/best',
-            'merge_output_fomat': 'mp4',
-            'outtmpl':'videos/%(title)s.%(ext)s',
-        }
-
-        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            ydl.download([Youtube_url])
