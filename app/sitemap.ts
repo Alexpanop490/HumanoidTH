@@ -11,6 +11,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/map",
     "/network",
     "/analytics",
+    "/synergy/dashboard",
+    "/synergy/deployment",
+    "/synergy/summary",
     "/inventory",
     "/submit-data"
   ];

@@ -1,12 +1,14 @@
 import type { SourceType } from "../../generated/prisma";
 import type { IngestResult, NormalizedSource } from "@/lib/ingest/types";
 import { saveSources } from "@/lib/ingest/save";
+import { ingestThaiJo } from "@/lib/ingest/thaijo";
 
 type AdapterInput = {
   query: string;
   limit?: number;
   days?: number;
   fromYear?: number;
+  toYear?: number;
 };
 
 async function finish(adapter: SourceType, query: string, records: NormalizedSource[], missingKeys: string[] = []): Promise<IngestResult> {
@@ -124,7 +126,7 @@ export async function ingestYoutube({ query, limit = 25 }: AdapterInput) {
   return finish("YOUTUBE", query, records);
 }
 
-export async function runAdapter(adapter: SourceType, input: AdapterInput) {
+export async function runAdapter(adapter: SourceType, input: AdapterInput): Promise<IngestResult> {
   switch (adapter) {
     case "OPENALEX":
       return ingestOpenAlex(input);
@@ -134,6 +136,8 @@ export async function runAdapter(adapter: SourceType, input: AdapterInput) {
       return ingestGdelt(input);
     case "YOUTUBE":
       return ingestYoutube(input);
+    case "THAIJO":
+      return ingestThaiJo(input);
     default:
       throw new Error(`Adapter ${adapter} is not implemented for API pulling yet.`);
   }

@@ -129,11 +129,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   };
 
   return (
-<<<<<<< HEAD
     <html lang={lang} suppressHydrationWarning={true} className={`${inter.variable} ${ibmPlexSansThai.variable}`}>
-=======
-    <html lang={lang} className={`${inter.variable} ${ibmPlexSansThai.variable}`}>
->>>>>>> alex
       <body>
         <script
           type="application/ld+json"

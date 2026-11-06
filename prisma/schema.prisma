@@ -18,6 +18,7 @@ enum SourceType {
   MANUAL_SOCIAL
   SUBMISSION
   WEB
+  THAIJO
 }
 
 enum RelevanceStatus {
@@ -75,6 +76,7 @@ model SourceRecord {
   relevanceReason     String?
   relevanceConfidence Float                   @default(0)
   annotations         PerspectiveAnnotation[]
+  hriAnalysis         HriAnalysis?
   triplets            Triplet[]
   createdAt           DateTime                @default(now())
   updatedAt           DateTime                @updatedAt
@@ -156,6 +158,38 @@ model PerspectiveAnnotation {
 
   @@unique([sourceId, perspectiveTheme, targetEntity, evidenceExcerpt])
   @@index([perspectiveTheme])
+}
+
+model HriAnalysis {
+  id                       String       @id @default(cuid())
+  sourceId                 String       @unique
+  source                   SourceRecord @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+  workplaceName            String?
+  robotName                String?
+  careSetting              String?
+  interactionOutcome       String       @default("unclear")
+  communicationBarrier     String       @default("unclear")
+  barrierStatus            String       @default("unclear")
+  positiveEmotions         Json         @default("[]")
+  negativeEmotions         Json         @default("[]")
+  humanResponse            String       @default("unclear")
+  robotResponse            String       @default("unclear")
+  positiveInteractionCount Int?
+  negativeInteractionCount Int?
+  metrics                  Json         @default("[]")
+  evidenceExcerpt          String       @default("")
+  confidence               Float        @default(0)
+  analysisStatus           String       @default("PENDING")
+  analysisMethod           String       @default("pending")
+  analysisError            String?
+  analyzedAt               DateTime?
+  createdAt                DateTime     @default(now())
+  updatedAt                DateTime     @updatedAt
+
+  @@index([workplaceName])
+  @@index([robotName])
+  @@index([interactionOutcome])
+  @@index([analysisStatus])
 }
 
 model Triplet {

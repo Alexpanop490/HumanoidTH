@@ -22,6 +22,11 @@ export async function GET(req: NextRequest) {
     case "perspective_annotations":
       data = await prisma.perspectiveAnnotation.findMany();
       break;
+    case "hri_analyses":
+      data = await prisma.hriAnalysis.findMany({
+        include: { source: { select: { title: true, url: true, publishedAt: true } } }
+      });
+      break;
     case "pull_jobs":
       data = await prisma.sourcePullJob.findMany();
       break;

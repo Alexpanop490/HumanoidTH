@@ -96,9 +96,20 @@ export async function runDataPull(formData: FormData) {
   const adapter = String(formData.get("adapter") ?? "OPENALEX") as SourceType;
   const query = String(formData.get("query") ?? "").trim();
   const limit = Number(formData.get("limit") ?? 10);
+  const fromYearValue = String(formData.get("fromYear") ?? "").trim();
+  const toYearValue = String(formData.get("toYear") ?? "").trim();
+  const fromYear = fromYearValue ? Number(fromYearValue) : undefined;
+  const toYear = toYearValue ? Number(toYearValue) : undefined;
 
   if (!query) {
     throw new Error("Query is required.");
+  }
+  if (adapter === "THAIJO" && (
+    (fromYear !== undefined && (!Number.isInteger(fromYear) || fromYear < 1900)) ||
+    (toYear !== undefined && (!Number.isInteger(toYear) || toYear < 1900)) ||
+    (fromYear !== undefined && toYear !== undefined && fromYear > toYear)
+  )) {
+    throw new Error("ThaiJO year range is invalid.");
   }
 
   const job = await prisma.sourcePullJob.create({
@@ -106,14 +117,18 @@ export async function runDataPull(formData: FormData) {
   });
 
   try {
-    const result = await runAdapter(adapter, { query, limit });
+    const result = await runAdapter(adapter, { query, limit, fromYear, toYear });
     await prisma.sourcePullJob.update({
       where: { id: job.id },
       data: {
-        status: result.missingKeys?.length ? "SKIPPED_MISSING_KEY" : "SUCCEEDED",
+        status: result.missingKeys?.length
+          ? "SKIPPED_MISSING_KEY"
+          : result.warnings?.length
+            ? "FAILED"
+            : "SUCCEEDED",
         recordsFound: result.recordsFound,
         recordsSaved: result.recordsSaved,
-        errorMessage: result.missingKeys?.join(", ") || null,
+        errorMessage: [...(result.missingKeys ?? []), ...(result.warnings ?? [])].join("; ") || null,
         finishedAt: new Date()
       }
     });
@@ -129,6 +144,8 @@ export async function runDataPull(formData: FormData) {
   }
 
   revalidatePath("/data-pulls");
+  revalidatePath("/database");
+  revalidatePath("/hri");
   revalidatePath("/");
 }
 

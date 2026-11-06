@@ -32,13 +32,9 @@ export const metadata: Metadata = {
     description: "Help keep the Thailand Humanoid Atlas accurate. Submit new robot deployments, academic papers, source links, or physical inventory updates.",
     images: ["/logo.png"]
   }
-<<<<<<< HEAD
 };
 
 const copy = {
-=======
-};const copy = {
->>>>>>> alex
   en: {
     accountTitle: "Create an account to submit data",
     accountText: "Submissions are connected to your profile so you can track review status and show your contribution history to the community.",
@@ -110,17 +106,10 @@ export default async function SubmitDataPage() {
 
   const submissions = currentUser
     ? await prisma.submittedData.findMany({
-<<<<<<< HEAD
       where: { submittedById: currentUser.id },
       orderBy: { createdAt: "desc" },
       take: 20
     })
-=======
-        where: { submittedById: currentUser.id },
-        orderBy: { createdAt: "desc" },
-        take: 20
-      })
->>>>>>> alex
     : [];
 
   return (
@@ -137,11 +126,8 @@ export default async function SubmitDataPage() {
           <h2>{localT.accountTitle}</h2>
           <p className="muted" style={{ marginBottom: 14 }}>{localT.accountText}</p>
           <form action={registerAndLoginUser} className="form" style={{ maxWidth: 520, gap: 12 }}>
-<<<<<<< HEAD
-=======
             <input type="hidden" name="redirectTo" value="/submit-data" />
             <input type="hidden" name="role" value="USER" />
->>>>>>> alex
             <label>
               {localT.accountEmail}
               <input name="email" type="email" required placeholder="ichiro.kato@waseda.jp" />
@@ -207,11 +193,6 @@ export default async function SubmitDataPage() {
           </ul>
         </aside>
       </div>
-<<<<<<< HEAD
-    </>
-  );
-}
-=======
 
       <h2 style={{ marginTop: 24 }}>{localT.queue}</h2>
       {currentUser && <p className="muted" style={{ marginTop: -8 }}>{localT.queueHelp}</p>}
@@ -262,5 +243,3 @@ export default async function SubmitDataPage() {
     </>
   );
 }
-
->>>>>>> alex

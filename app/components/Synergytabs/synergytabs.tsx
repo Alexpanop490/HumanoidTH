@@ -1,30 +1,29 @@
+"use client";
+
 import styles from "./synergy.module.css";
-import { getTranslation } from "@/lib/translations";
 import Link from "next/link";
-import { cookies, headers } from "next/headers";
+import { usePathname } from "next/navigation";
 
-export default async function SynergyTabs() {
-    const cookieStore = await cookies();
-    const lang = (cookieStore.get("lang")?.value || "en") as "en" | "th";
-    const t = getTranslation(lang);
+interface SynergyTabsProps {
+    analyticsLabel: string;
+    synergyLabel: string;
+}
 
-    // Get the current path from server headers (requires middleware)
-    const headersList = await headers();
-    const pathname = headersList.get("x-pathname") || "";
-
+export default function SynergyTabs({ analyticsLabel, synergyLabel }: SynergyTabsProps) {
+    const pathname = usePathname() || "";
     return (
         <div className={styles.tabs}>
             <Link
                 href="/analytics"
                 className={`${styles.tab} ${pathname === "/analytics" ? styles.active : ""}`}
             >
-                {t.analytics}
+                {analyticsLabel}
             </Link>
             <Link
                 href="/synergy"
-                className={`${styles.tab} ${pathname === "/synergy" ? styles.active : ""}`}
+                className={`${styles.tab} ${pathname.startsWith("/synergy") ? styles.active : ""}`}
             >
-                {t.synergy}
+                {synergyLabel}
             </Link>
         </div>
     );

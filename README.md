@@ -48,8 +48,8 @@ I built this platform using a modern, scalable, and developer-friendly stack:
 
 - 💻 **Frontend & Routing:** [Next.js 15 (App Router)](https://nextjs.org/) for highly responsive Server Components and dynamic layouts.
 - 🗄️ **Database & Modeling:** [Prisma ORM](https://www.prisma.io/) with [PostgreSQL](https://www.postgresql.org/) for transparent, typed data structures.
-- ⚙️ **Data Ingestion Adapters:** Multi-source background adapters retrieving records from **OpenAlex** 🎓, **GitHub** 🐙, **GDELT** 🌍, and **YouTube** 📺.
-- 🧠 **AI Integration:** [Gemini API](https://ai.google.dev/) (`gemini-1.5-flash`) for automated relevance classification, stance extraction, and geographical contribution clustering.
+- ⚙️ **Data Ingestion Adapters:** Multi-source background adapters retrieving records from **ThaiJO** 📚, **OpenAlex** 🎓, **GitHub** 🐙, **GDELT** 🌍, and **YouTube** 📺.
+- 🧠 **AI Integration:** [Gemini API](https://ai.google.dev/) for evidence-grounded HRI extraction and existing source classification.
 
 ---
 
@@ -79,9 +79,10 @@ DATABASE_URL="postgresql://postgres:postgres@localhost:5432/thailand_humanoid_at
 YOUTUBE_API_KEY="your-youtube-api-key"
 GITHUB_TOKEN="your-github-personal-access-token"
 GEMINI_API_KEY="your-gemini-api-key"
+GEMINI_MODEL="gemini-2.5-flash"
 ```
 > [!NOTE]
-> 📺 `YOUTUBE_API_KEY` is required only for video ingestion. 🔑 `GEMINI_API_KEY` is required for AI-powered contribution mapping and source analysis. 🐙 `GITHUB_TOKEN` is optional but highly recommended to avoid API rate limiting.
+> 📺 `YOUTUBE_API_KEY` is required only for video ingestion. 🔑 `GEMINI_API_KEY` enables HRI analysis; without it ThaiJO records are saved as pending analysis. `GEMINI_MODEL` is optional. 🐙 `GITHUB_TOKEN` is optional but highly recommended to avoid API rate limiting.
 
 ### 🗄️ 3. Initialize & Seed the Database
 ```bash
@@ -121,6 +122,20 @@ curl -X POST http://localhost:3000/api/ingest/github \
   -d '{"query":"robotics thailand","limit":10}'
 ```
 
+### 📚 ThaiJO healthcare and HRI analysis
+Use the protected `/data-pulls` page to search ThaiJO articles (for example, `telehealth robot human-robot interaction`) and set a publication-year range. The adapter stores source URLs, abstracts, authors, journal metadata, and publication dates in PostgreSQL. With `GEMINI_API_KEY` configured, Gemini extracts named workplaces and robots, interaction outcomes, communication barriers, emotions, human/robot responses, and only the numerical metrics explicitly reported in each abstract. Unknown values remain unknown.
+
+The same ingestion can be run from the command line:
+```bash
+pnpm ingest:thaijo -- "telehealth robot human-robot interaction"
+```
+
+Apply the Prisma schema before running the new pipeline:
+```bash
+pnpm db:generate
+pnpm db:push
+```
+
 ---
 
 ## 🌐 Product Routes Map
@@ -133,6 +148,7 @@ Explore the main app modules:
 - `🟢 /map` — 🗺️ AI-powered ecosystem contribution map geolocating Thai robotics research and inventory.
 - `🟢 /network` — 🔗 Dynamic Cytoscape network graph mapping connections between institutions, developers, and robots.
 - `🟡 /analytics` — 📈 Statistics, sentiment graphs, and attention metrics over time.
+- `🟢 /hri` — 🩺 ThaiJO healthcare human-robot interaction outcomes, barriers, emotions, and reported study metrics.
 - `🟢 /data-pulls` — 🔌 Control room to trigger data ingestion pipelines.
 - `🟡 /submit-data` — 📥 Community submission form for sharing robot models and projects.
 
