@@ -16,6 +16,7 @@ export const translations = {
     admin: "Admin",
     cms: "CMS",
     profile: "Profile",
+    synergy: "Synergy Track",
     
     // Overview page
     overviewTitle: "Overview & Corpus Summary",
