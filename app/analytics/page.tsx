@@ -5,7 +5,6 @@ import { getTranslation } from "@/lib/translations";
 import AnalyticsPlayground from "./AnalyticsPlayground";
 import AnalyticsBpmn from "./AnalyticsBpmn";
 import SynergyTabs from "@/app/components/Synergytabs/synergytabs";
-import SynergyTabs from "@/app/components/Synergytabs/synergytabs";
 
 export const dynamic = "force-dynamic";
 
