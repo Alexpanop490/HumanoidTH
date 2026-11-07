@@ -5,6 +5,80 @@
 
 .title {
   margin-top: 20px;
-  height: 24px;
-  font-weight: 400;
+  height: auto;
+  font-weight: 700;
+}
+
+.container {
+  padding: 24px 0;
+}
+
+.title {
+  margin-top: 20px;
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  color: var(--text-primary);
+}
+
+.pageHeader {
+  align-items: flex-end;
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+  margin: 22px 0 8px;
+}
+
+.eyebrow {
+  color: #78877c;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+}
+
+.title {
+  margin: 5px 0 4px;
+}
+
+.subtitle {
+  color: var(--text-secondary);
+  font-size: 13px;
+  margin: 0;
+  max-width: 650px;
+}
+
+.liveBadge {
+  align-items: center;
+  background: #edf5ef;
+  border: 1px solid #dceade;
+  border-radius: 999px;
+  color: #477457;
+  display: inline-flex;
+  flex: 0 0 auto;
+  font-size: 10px;
+  gap: 7px;
+  padding: 7px 11px;
+}
+
+.liveBadge span {
+  background: #4a9a69;
+  border-radius: 50%;
+  height: 7px;
+  width: 7px;
+}
+
+.notice {
+  background: #fff8eb;
+  border: 1px solid #f0dfb8;
+  border-radius: 12px;
+  color: #735d34;
+  font-size: 12px;
+  margin: 14px 0;
+  padding: 12px 15px;
+}
+
+@media (max-width: 600px) {
+  .pageHeader {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 12px;
+  }
 }

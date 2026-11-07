@@ -26,7 +26,7 @@ const collectionLabels: Record<CmsCollection, string> = {
   "submitted-data": "Submitted Data"
 };
 
-const sourceTypes = ["SEED", "RSS", "GDELT", "YOUTUBE", "OPENALEX", "GITHUB", "MANUAL_SOCIAL", "SUBMISSION", "WEB"] as const;
+const sourceTypes = ["SEED", "RSS", "GDELT", "YOUTUBE", "THAIJO", "OPENALEX", "GITHUB", "MANUAL_SOCIAL", "SUBMISSION", "WEB"] as const;
 const relevanceStatuses = ["PENDING", "ACCEPTED", "REJECTED", "UNCERTAIN"] as const;
 const reviewStatuses = ["QUEUED", "FETCHING", "ANALYZED", "NEEDS_REVIEW", "APPROVED", "REJECTED", "FAILED"] as const;
 const visibilityOptions = ["public", "private"] as const;

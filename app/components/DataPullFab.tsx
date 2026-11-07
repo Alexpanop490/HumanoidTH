@@ -60,6 +60,7 @@ export default function DataPullFab() {
                   <option value="GITHUB">GitHub</option>
                   <option value="GDELT">GDELT</option>
                   <option value="YOUTUBE">YouTube</option>
+                  <option value="THAIJO">ThaiJO</option>
                 </select>
               </label>
 

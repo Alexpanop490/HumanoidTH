@@ -62,7 +62,7 @@ export function createSeedClient() {
   }
 
   return new PrismaClient({
-    adapter: new PrismaPg(connectionString)
+    adapter: new PrismaPg({ connectionString })
   });
 }
 

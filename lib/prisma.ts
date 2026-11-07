@@ -9,7 +9,7 @@ if (!connectionString) {
   throw new Error("DATABASE_URL is required for Prisma.");
 }
 
-const adapter = new PrismaPg(connectionString);
+const adapter = new PrismaPg({ connectionString });
 
 export const prisma =
   globalForPrisma.prisma ??

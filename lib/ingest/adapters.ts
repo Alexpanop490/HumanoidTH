@@ -124,6 +124,76 @@ export async function ingestYoutube({ query, limit = 25 }: AdapterInput) {
   return finish("YOUTUBE", query, records);
 }
 
+type ThaiJoArticle = {
+  article_url?: string;
+  authors?: Record<string, string[]>;
+  abstracts?: Record<string, string | string[]>;
+  date_published?: string | null;
+  doi?: string | null;
+  id?: string;
+  journal_name?: Record<string, string>;
+  journal_path?: string;
+  keywords?: Record<string, string[]>;
+  titles?: Record<string, string>;
+  year?: number;
+};
+
+function firstLocalizedText(values?: Record<string, string | string[]>) {
+  if (!values) return "";
+  const preferred = values.en_US ?? values.th_TH ?? Object.values(values)[0];
+  return Array.isArray(preferred) ? preferred.join(", ") : preferred ?? "";
+}
+
+export async function ingestThaiJo({ query, limit = 25 }: AdapterInput) {
+  const perPage = Number.isFinite(limit) ? Math.max(1, Math.min(Math.trunc(limit), 50)) : 25;
+  const response = await fetch("https://www.tci-thaijo.org/api/v1/articles/search", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Accept: "application/json" },
+    body: JSON.stringify({
+      q: query,
+      page: 1,
+      per_page: perPage,
+      sort: "date_desc",
+      highlight: false,
+      facets: false
+    }),
+    cache: "no-store"
+  });
+  if (!response.ok) throw new Error(`ThaiJO ${response.status}`);
+  const payload: { hits?: ThaiJoArticle[] } = await response.json();
+
+  const records: NormalizedSource[] = (payload.hits ?? []).flatMap((article) => {
+    const title = firstLocalizedText(article.titles);
+    if (!article.article_url || !title) return [];
+
+    const journalName = firstLocalizedText(article.journal_name);
+    const keywords = firstLocalizedText(article.keywords);
+    const excerpt = firstLocalizedText(article.abstracts);
+    const publishedAt = article.date_published ? new Date(article.date_published) : null;
+
+    return [{
+      sourceType: "THAIJO",
+      title,
+      url: article.article_url,
+      excerpt: excerpt || keywords || journalName,
+      publishedAt: publishedAt && !Number.isNaN(publishedAt.getTime()) ? publishedAt : null,
+      author: firstLocalizedText(article.authors) || null,
+      platform: "thaijo",
+      rawMeta: {
+        query,
+        thaiJoId: article.id,
+        doi: article.doi,
+        journalName,
+        journalPath: article.journal_path,
+        keywords,
+        year: article.year
+      }
+    }];
+  });
+
+  return finish("THAIJO", query, records);
+}
+
 export async function runAdapter(adapter: SourceType, input: AdapterInput) {
   switch (adapter) {
     case "OPENALEX":
@@ -134,6 +204,8 @@ export async function runAdapter(adapter: SourceType, input: AdapterInput) {
       return ingestGdelt(input);
     case "YOUTUBE":
       return ingestYoutube(input);
+    case "THAIJO":
+      return ingestThaiJo(input);
     default:
       throw new Error(`Adapter ${adapter} is not implemented for API pulling yet.`);
   }

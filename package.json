@@ -27,13 +27,14 @@
     "ingest:github": "tsx scripts/ingest.ts github",
     "ingest:gdelt": "tsx scripts/ingest.ts gdelt",
     "ingest:youtube": "tsx scripts/ingest.ts youtube",
+    "ingest:thaijo": "tsx scripts/ingest.ts thaijo",
     "test": "tsx --test test/*.test.ts"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@mui/material": "^9.2.0",
-    "@prisma/adapter-pg": "^7.8.0",
+    "@prisma/adapter-pg": "6.19.3",
     "@prisma/client": "^6.19.3",
     "bpmn-js": "^18.19.0",
     "cytoscape": "^3.34.0",
