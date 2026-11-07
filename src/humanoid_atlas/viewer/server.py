@@ -32,6 +32,16 @@ def render(request: Request, template: str, **context):
     return templates.TemplateResponse(request, template, base)
 
 
+ALLOWED_TABLES = {
+    "sources": "sources",
+    "robot_models": "robot_models",
+    "owned_inventory": "owned_inventory",
+    "contributions": "contributions",
+    "perspective_annotations": "perspective_annotations",
+    "submitted_data": "submitted_data",
+}
+
+
 def create_app() -> FastAPI:
     init_db()
     app = FastAPI(title=get_settings().project_name)
@@ -82,27 +92,34 @@ def create_app() -> FastAPI:
 
     @app.get("/database")
     def database(request: Request, table: str = "sources", q: str = ""):
-        allowed = {"sources", "robot_models", "owned_inventory", "contributions", "perspective_annotations", "submitted_data"}
-        table = table if table in allowed else "sources"
-        where = ""
+        table_name = ALLOWED_TABLES.get(table, "sources")
+        allowed = sorted(ALLOWED_TABLES)
+        query = "SELECT * FROM " + table_name
         params: tuple = ()
         if q:
-            where = "WHERE " + ("title LIKE ? OR url LIKE ?" if table in {"sources", "submitted_data"} else "CAST(id AS TEXT) LIKE ?")
-            params = (f"%{q}%", f"%{q}%") if table in {"sources", "submitted_data"} else (f"%{q}%",)
-        data = rows(f"SELECT * FROM {table} {where} ORDER BY id DESC LIMIT 250", params)
-        return render(request, "database.html", table=table, q=q, rows=data, allowed=sorted(allowed))
+            if table_name in {"sources", "submitted_data"}:
+                query += " WHERE title LIKE ? OR url LIKE ?"
+                params = (f"%{q}%", f"%{q}%")
+            else:
+                query += " WHERE CAST(id AS TEXT) LIKE ?"
+                params = (f"%{q}%",)
+        query += " ORDER BY id DESC LIMIT 250"
+        data = rows(query, params)
+        return render(request, "database.html", table=table_name, q=q, rows=data, allowed=allowed)
 
     @app.get("/database/export.csv")
     def database_export(table: str = "sources"):
-        allowed = {"sources", "robot_models", "owned_inventory", "contributions", "perspective_annotations", "submitted_data"}
-        if table not in allowed:
-            table = "sources"
-        data = rows(f"SELECT * FROM {table}")
+        table_name = ALLOWED_TABLES.get(table, "sources")
+        data = rows("SELECT * FROM " + table_name)
         headers = list(data[0].keys()) if data else ["empty"]
         lines = [",".join(headers)]
         for row in data:
             lines.append(",".join(str(row.get(h, "")).replace(",", " ") for h in headers))
-        return StreamingResponse(iter(["\n".join(lines)]), media_type="text/csv", headers={"Content-Disposition": f"attachment; filename={table}.csv"})
+        return StreamingResponse(
+            iter(["\n".join(lines)]),
+            media_type="text/csv",
+            headers={"Content-Disposition": f"attachment; filename={table_name}.csv"},
+        )
 
     @app.get("/submit-data")
     def submit_data(request: Request):

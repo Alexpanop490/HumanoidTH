@@ -5,6 +5,7 @@ import { getTranslation } from "@/lib/translations";
 import AnalyticsPlayground from "./AnalyticsPlayground";
 import AnalyticsBpmn from "./AnalyticsBpmn";
 import SynergyTabs from "@/app/components/Synergytabs/synergytabs";
+import SynergyTabs from "@/app/components/Synergytabs/synergytabs";
 
 export const dynamic = "force-dynamic";
 
@@ -265,9 +266,18 @@ export const metadata: Metadata = {
     <>
       <SynergyTabs />
       <div style={{ marginTop: "20px" }} />
+      <SynergyTabs />
+      <div style={{ marginTop: "20px" }} />
       <h1>{t.analyticsTitle}</h1>
       <p className="muted" style={{ marginBottom: "18px" }}>{t.analyticsDesc}</p>
       <div className="notice">This workspace uses live database rows only. No sample data is injected here.</div>
+      {
+        dbOffline && (
+          <div className="notice" style={{ marginBottom: 16 }}>
+            Live analytics are unavailable. This page needs PostgreSQL to build the analysis workspace.
+          </div>
+        )
+      }
       {
         dbOffline && (
           <div className="notice" style={{ marginBottom: 16 }}>

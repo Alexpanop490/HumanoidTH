@@ -83,6 +83,7 @@ def filter_relevance(pending: bool = False) -> None:
     updated = 0
     with connect() as conn:
         rows = conn.execute(f"SELECT id,title,excerpt FROM sources {where}").fetchall()
+ alex
         for row in rows:
             result = classify_text(row["title"], row["excerpt"])
             conn.execute(
@@ -108,6 +109,7 @@ def analyze_perspectives(pending: bool = False) -> None:
             {where}
             """
         ).fetchall()
+ alex
     for row in rows:
         annotation = annotate(row["title"], row["excerpt"]).model_dump()
         insert_perspective(row["id"], annotation)
@@ -145,6 +147,7 @@ def export_csv(table: str = typer.Option(..., "--table"), out: Path = typer.Opti
         df = pd.read_sql_query(f"SELECT * FROM {table}", conn)
     csv_path = out / f"{table}.csv"
     xlsx_path = out / f"{table}.xlsx"
+ alex
     df.to_csv(csv_path, index=False)
     df.to_excel(xlsx_path, index=False)
     typer.echo({"csv": str(csv_path), "xlsx": str(xlsx_path), "rows": len(df)})

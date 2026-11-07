@@ -44,7 +44,6 @@ export const translations = {
     emptyStateTitle: "Database Empty State Guide",
     emptyStateDesc: "If there are no robot models or source signals populated, initialize the active Next.js database with the project setup commands:",
 
-    // Other page headers
     dashboardTitle: "Ecosystem Dashboard",
     dashboardDesc: "Aggregate counts across robot models, sources, contributions, and perspective annotations.",
     dataPullsTitle: "API Data Ingestion",
@@ -107,7 +106,6 @@ export const translations = {
     profile: "โปรไฟล์ระบบ",
     synergy: "Synergy Track",
 
-    // Overview page
     overviewTitle: "ภาพรวมและสรุปคลังข้อมูล",
     overviewDesc: "ระบบฐานข้อมูลวิจัยเพื่อรวบรวมระบบนิเวศหุ่นยนต์และสัญญาณความคิดเห็นสาธารณะในประเทศไทย",
     runDataPull: "เรียกใช้การดึงข้อมูล",
@@ -133,7 +131,6 @@ export const translations = {
     emptyStateTitle: "คู่มือเริ่มใช้งานกรณีฐานข้อมูลว่างเปล่า",
     emptyStateDesc: "หากไม่มีโมเดลหุ่นยนต์หรือข้อมูลแหล่งที่มาปรากฏ ให้เรียกใช้คำสั่ง CLI ต่อไปนี้ที่โฟลเดอร์หลักของโปรเจกต์เพื่อตั้งต้นระบบ:",
 
-    // Other page headers
     dashboardTitle: "แดชบอร์ดระบบนิเวศ",
     dashboardDesc: "มุมมองของสาธารณชนและสื่อต่อหุ่นยนต์ฮิวแมนนอยด์และหุ่นยนต์โซเชียลในประเทศไทย",
     dataPullsTitle: "การดึงข้อมูลผ่าน API",
