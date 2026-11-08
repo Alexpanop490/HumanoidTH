@@ -3,7 +3,7 @@ import HriDashboard, { type HriView } from "./HriDashboard";
 
 async function fetchHriAnalyses() {
   return prisma.hriAnalysis.findMany({
-    where: { source: { is: { sourceType: "THAIJO", relevanceStatus: { not: "REJECTED" } } } },
+    where: { source: { is: { sourceType: "THAIJO", relevanceStatus: "ACCEPTED" } } },
     include: {
       source: {
         select: {
