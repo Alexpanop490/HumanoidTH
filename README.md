@@ -144,6 +144,8 @@ curl -X POST http://127.0.0.1:8000/api/videos \
 
 The response is the web-importable record. Retrieve saved records from `GET /api/videos` or a record by ID from `GET /api/videos/{id}`. Uploads require a supported video extension; analysis errors are returned explicitly if the video cannot be decoded or Ollama is unavailable.
 
+For YouTube pulls, set `YOUTUBE_API_KEY` for the Next.js app and keep the Python API and Ollama running. Choose **YouTube** in the data-pull dialog; the query will include `humanoid robot`, and up to three videos per pull are downloaded temporarily, sampled with OpenCV, and analyzed with the Ollama vision model. The Python API defaults to `http://127.0.0.1:8000`; set `HUMANOID_ATLAS_API_URL` if it runs elsewhere. Visually confirmed detections are added to the Robots registry with a YouTube source and a human-review flag.
+
 ---
 
 ## 🌐 Product Routes Map

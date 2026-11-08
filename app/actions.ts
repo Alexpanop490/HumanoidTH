@@ -105,31 +105,57 @@ export async function runDataPull(formData: FormData) {
     data: { adapter, query, status: "RUNNING", startedAt: new Date() }
   });
 
+  let outcome: {
+    status: "SUCCEEDED" | "SKIPPED_MISSING_KEY" | "FAILED";
+    recordsFound: number;
+    recordsSaved: number;
+    recordsAnalyzed?: number;
+    confirmedHumanoidVideos?: number;
+    errorMessage: string | null;
+  };
   try {
     const result = await runAdapter(adapter, { query, limit });
+    const status = result.missingKeys?.length ? "SKIPPED_MISSING_KEY" : "SUCCEEDED";
     await prisma.sourcePullJob.update({
       where: { id: job.id },
       data: {
-        status: result.missingKeys?.length ? "SKIPPED_MISSING_KEY" : "SUCCEEDED",
+        status,
         recordsFound: result.recordsFound,
         recordsSaved: result.recordsSaved,
         errorMessage: result.missingKeys?.join(", ") || null,
         finishedAt: new Date()
       }
     });
+    outcome = {
+      status,
+      recordsFound: result.recordsFound,
+      recordsSaved: result.recordsSaved,
+      recordsAnalyzed: result.recordsAnalyzed,
+      confirmedHumanoidVideos: result.confirmedHumanoidVideos,
+      errorMessage: result.missingKeys?.join(", ") || null
+    };
   } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : "Unknown ingestion error";
     await prisma.sourcePullJob.update({
       where: { id: job.id },
       data: {
         status: "FAILED",
-        errorMessage: error instanceof Error ? error.message : "Unknown ingestion error",
+        errorMessage,
         finishedAt: new Date()
       }
     });
+    outcome = {
+      status: "FAILED",
+      recordsFound: 0,
+      recordsSaved: 0,
+      errorMessage
+    };
   }
 
   revalidatePath("/data-pulls");
   revalidatePath("/");
+  revalidatePath("/robots");
+  return outcome;
 }
 
 export async function loginAsUser(email: string, role: string) {

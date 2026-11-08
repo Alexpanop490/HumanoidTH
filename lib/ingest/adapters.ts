@@ -1,6 +1,8 @@
-import type { SourceType } from "../../generated/prisma";
+import { Prisma, type SourceType } from "../../generated/prisma";
 import type { IngestResult, NormalizedSource } from "@/lib/ingest/types";
 import { saveSources } from "@/lib/ingest/save";
+import { prisma } from "@/lib/prisma";
+import { hasThaiJoPsychologicalKeyword, isThaiJoTopicMatch } from "@/lib/thaijo-relevance";
 
 type AdapterInput = {
   query: string;
@@ -94,34 +96,141 @@ export async function ingestGdelt({ query, limit = 25, days = 30 }: AdapterInput
 }
 
 export async function ingestYoutube({ query, limit = 25 }: AdapterInput) {
+  const searchQuery = /\bhumanoid\s+robots?\b/i.test(query) ? query : `${query.trim()} humanoid robot`.trim();
+  const analysisLimit = Number.isFinite(limit) ? Math.max(1, Math.min(Math.trunc(limit), 3)) : 3;
   const key = process.env.YOUTUBE_API_KEY;
   if (!key) {
-    return finish("YOUTUBE", query, [], ["YOUTUBE_API_KEY"]);
+    return finish("YOUTUBE", searchQuery, [], ["YOUTUBE_API_KEY"]);
   }
 
   const url = new URL("https://www.googleapis.com/youtube/v3/search");
   url.searchParams.set("part", "snippet");
-  url.searchParams.set("q", query);
+  url.searchParams.set("q", searchQuery);
   url.searchParams.set("type", "video");
-  url.searchParams.set("maxResults", String(Math.min(limit, 50)));
+  url.searchParams.set("maxResults", String(analysisLimit));
   url.searchParams.set("key", key);
 
   const response = await fetch(url, { cache: "no-store" });
   if (!response.ok) throw new Error(`YouTube ${response.status}`);
-  const payload = await response.json();
+  const payload: { items?: Array<{ id?: { videoId?: string }; snippet?: { title?: string; description?: string; channelTitle?: string; publishedAt?: string } }> } = await response.json();
+  const videos = (payload.items ?? []).flatMap((item) => {
+    const videoId = item.id?.videoId;
+    if (!videoId) return [];
+    return [{
+      video_id: videoId,
+      title: item.snippet?.title ?? "Untitled YouTube video",
+      description: item.snippet?.description ?? "",
+      channel_title: item.snippet?.channelTitle ?? null,
+      published_at: item.snippet?.publishedAt ?? null
+    }];
+  });
+  if (!videos.length) return finish("YOUTUBE", searchQuery, []);
 
-  const records: NormalizedSource[] = (payload.items ?? []).map((item: any) => ({
+  const apiUrl = (process.env.HUMANOID_ATLAS_API_URL ?? "http://127.0.0.1:8000").replace(/\/+$/, "");
+  const analysisResponse = await fetch(`${apiUrl}/api/youtube/analyze`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ videos }),
+    cache: "no-store",
+    signal: AbortSignal.timeout(600_000)
+  });
+  const analysisPayload = await analysisResponse.json().catch(() => null) as {
+    detail?: string;
+    videos?: Array<{
+      video_id: string;
+      title: string;
+      description?: string;
+      url: string;
+      channel_title?: string | null;
+      published_at?: string | null;
+      summary: string;
+      robots_detected: string[];
+      humanoid_robot_detected: boolean;
+      actions_observed: string[];
+      setting?: string | null;
+      events?: unknown[];
+      evidence?: string[];
+      confidence: number;
+      analysis_model: string;
+      duration_seconds: number;
+    }>
+  } | null;
+  if (!analysisResponse.ok || !analysisPayload?.videos) {
+    const reason = analysisPayload?.detail || `HTTP ${analysisResponse.status}`;
+    throw new Error(`YouTube video analysis failed: ${reason}. Check the Humanoid API and Ollama service.`);
+  }
+
+  const records: NormalizedSource[] = analysisPayload.videos.map((video) => ({
     sourceType: "YOUTUBE",
-    title: item.snippet?.title ?? "Untitled YouTube video",
-    url: `https://www.youtube.com/watch?v=${item.id?.videoId}`,
-    excerpt: item.snippet?.description ?? "",
-    publishedAt: item.snippet?.publishedAt ? new Date(item.snippet.publishedAt) : null,
-    author: item.snippet?.channelTitle ?? null,
+    title: video.title,
+    url: video.url,
+    excerpt: [video.summary, video.actions_observed.length ? `Observed actions: ${video.actions_observed.join(", ")}.` : ""].filter(Boolean).join(" "),
+    publishedAt: video.published_at ? new Date(video.published_at) : null,
+    author: video.channel_title ?? null,
     platform: "youtube",
-    rawMeta: { query, videoId: item.id?.videoId }
+    rawMeta: {
+      query: searchQuery,
+      videoId: video.video_id,
+      durationSeconds: video.duration_seconds,
+      humanoidAnalysis: video,
+      canonicalName: video.robots_detected[0] ?? ""
+    }
   }));
 
-  return finish("YOUTUBE", query, records);
+  const recordsSaved = records.length ? await saveSources(records) : 0;
+  for (const video of analysisPayload.videos) {
+    if (!video.humanoid_robot_detected) continue;
+    const names = video.robots_detected.length ? video.robots_detected : ["Humanoid robot (YouTube observation)"];
+    for (const rawName of names) {
+      const canonicalName = rawName.trim().replace(/\s+/g, " ").slice(0, 120);
+      if (!canonicalName) continue;
+
+      const existing = await prisma.robotModel.findFirst({
+        where: { canonicalName: { equals: canonicalName, mode: "insensitive" } }
+      });
+      const analysisJson = JSON.parse(JSON.stringify(video)) as Prisma.InputJsonValue;
+      const sourceMeta = {
+        ...(existing?.sourceMeta && typeof existing.sourceMeta === "object" && !Array.isArray(existing.sourceMeta) ? existing.sourceMeta : {}),
+        title: video.title,
+        videoId: video.video_id,
+        thumbnailUrl: `https://i.ytimg.com/vi/${encodeURIComponent(video.video_id)}/hqdefault.jpg`,
+        humanoidAnalysis: analysisJson,
+        needsHumanReview: true
+      } as Prisma.InputJsonValue;
+      const robotData = {
+        description: `${video.summary} Visual identification from a YouTube video; expert review is pending.`,
+        robotType: "humanoid",
+        thailandStatus: "observed_in_video",
+        statusConfidence: Math.max(0, Math.min(video.confidence, 1)),
+        officialUrl: video.url,
+        sourceMeta,
+        lastVerifiedAt: new Date(),
+        firstSeenYear: video.published_at ? new Date(video.published_at).getFullYear() : null
+      };
+
+      if (existing) {
+        await prisma.robotModel.update({ where: { id: existing.id }, data: { ...robotData, sourceMeta } });
+      } else {
+        await prisma.robotModel.create({
+          data: {
+            canonicalName,
+            primaryUseCase: video.actions_observed.join(", ") || "Video-observed humanoid robot; needs expert review",
+            ...robotData
+          }
+        });
+      }
+    }
+  }
+
+  return {
+    adapter: "YOUTUBE" as const,
+    query: searchQuery,
+    recordsFound: records.length,
+    recordsSaved,
+    recordsAnalyzed: analysisPayload.videos.length,
+    confirmedHumanoidVideos: analysisPayload.videos.filter((video) => video.humanoid_robot_detected).length,
+    missingKeys: []
+  };
 }
 
 type ThaiJoArticle = {
@@ -142,6 +251,14 @@ function firstLocalizedText(values?: Record<string, string | string[]>) {
   if (!values) return "";
   const preferred = values.en_US ?? values.th_TH ?? Object.values(values)[0];
   return Array.isArray(preferred) ? preferred.join(", ") : preferred ?? "";
+}
+
+function allLocalizedTexts(values?: Record<string, string | string[]>) {
+  if (!values) return [];
+  return Object.values(values)
+    .flatMap((value) => Array.isArray(value) ? value : [value])
+    .map((value) => value.trim())
+    .filter(Boolean);
 }
 
 export async function ingestThaiJo({ query, limit = 25 }: AdapterInput) {
@@ -167,7 +284,13 @@ export async function ingestThaiJo({ query, limit = 25 }: AdapterInput) {
     if (!article.article_url || !title) return [];
 
     const journalName = firstLocalizedText(article.journal_name);
-    const keywords = firstLocalizedText(article.keywords);
+    const localizedKeywords = allLocalizedTexts(article.keywords);
+    const keywords = localizedKeywords.join(", ");
+    const localizedTitles = allLocalizedTexts(article.titles);
+    const localizedAbstracts = allLocalizedTexts(article.abstracts);
+    if (!isThaiJoTopicMatch([...localizedTitles, ...localizedAbstracts, ...localizedKeywords].join(" "))) return [];
+    if (!hasThaiJoPsychologicalKeyword(keywords)) return [];
+
     const excerpt = firstLocalizedText(article.abstracts);
     const publishedAt = article.date_published ? new Date(article.date_published) : null;
 
@@ -186,6 +309,7 @@ export async function ingestThaiJo({ query, limit = 25 }: AdapterInput) {
         journalName,
         journalPath: article.journal_path,
         keywords,
+        searchText: [...localizedTitles, ...localizedAbstracts, ...localizedKeywords].join(" "),
         year: article.year
       }
     }];

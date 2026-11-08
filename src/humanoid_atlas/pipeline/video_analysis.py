@@ -1,12 +1,18 @@
 import base64
 import json
 import math
+import re
 import tempfile
 from pathlib import Path
 
 import cv2
 import httpx
 from pydantic import BaseModel, Field, ValidationError
+
+try:
+    import yt_dlp
+except ImportError:  # pragma: no cover - optional runtime dependency
+    yt_dlp = None
 
 from humanoid_atlas.config import get_settings
 
@@ -33,6 +39,7 @@ class VideoEvent(BaseModel):
 class VideoObservations(BaseModel):
     summary: str
     robots_detected: list[str] = Field(default_factory=list)
+    humanoid_robot_detected: bool
     actions_observed: list[str] = Field(default_factory=list)
     setting: str | None = None
     events: list[VideoEvent] = Field(default_factory=list)
@@ -88,7 +95,10 @@ def analyze_frames_with_ollama(frames: list[dict[str, object]]) -> tuple[VideoOb
         "Analyze these sampled frames from a video about humanoid or social robotics. "
         f"The frames are in chronological order at seconds: {timestamps}. "
         "Return only the requested JSON. Describe only what is visibly supported by the frames; "
-        "do not infer a robot model, identity, location, or action that is not clear. "
+        "set humanoid_robot_detected to true only when a humanoid robot is clearly visible. "
+        "When true, include its readable model name in robots_detected, or use 'humanoid robot' "
+        "if the model cannot be identified. Do not list non-humanoid robots as humanoid. "
+        "Do not infer a model name, identity, location, or action that is not visually clear. "
         "Use an empty list when no robot or event is clearly visible, null for an unknown setting, "
         "and timestamps in seconds for events. Keep evidence concise. "
         "Set confidence between 0 and 1 based on visual certainty."
@@ -115,3 +125,63 @@ def analyze_frames_with_ollama(frames: list[dict[str, object]]) -> tuple[VideoOb
     except (KeyError, TypeError, json.JSONDecodeError, ValidationError) as error:
         raise OllamaUnavailableError("Ollama returned an invalid video-analysis response.") from error
     return observations, model
+
+
+def analyze_youtube_video(video: dict[str, object]) -> dict[str, object]:
+    video_id = video.get("video_id")
+    if not isinstance(video_id, str) or re.fullmatch(r"[A-Za-z0-9_-]{11}", video_id) is None:
+        raise InvalidVideoError("YouTube returned an invalid video ID.")
+    if yt_dlp is None:
+        raise InvalidVideoError("yt-dlp is required to analyze YouTube videos.")
+
+    with tempfile.TemporaryDirectory(prefix="humanoid-atlas-youtube-") as temp_dir:
+        output_template = str(Path(temp_dir) / "%(id)s.%(ext)s")
+
+        def reject_long_video(info: dict[str, object], *, incomplete: bool) -> str | None:
+            duration = info.get("duration")
+            if not incomplete and isinstance(duration, (int, float)) and duration > MAX_VIDEO_DURATION_SECONDS:
+                return "Video duration must not exceed 60 minutes."
+            return None
+
+        options = {
+            "format": "best[height<=480][ext=mp4]/best[height<=480]/best[ext=mp4]/best",
+            "outtmpl": output_template,
+            "max_filesize": MAX_VIDEO_BYTES,
+            "merge_output_format": "mp4",
+            "match_filter": reject_long_video,
+            "noplaylist": True,
+            "quiet": True,
+            "no_warnings": True,
+        }
+
+        with yt_dlp.YoutubeDL(options) as downloader:
+            info = downloader.extract_info(f"https://www.youtube.com/watch?v={video_id}", download=True)
+            candidates = [info.get("filepath"), info.get("_filename"), downloader.prepare_filename(info)]
+
+        video_path = next(
+            (Path(candidate) for candidate in candidates if isinstance(candidate, str) and Path(candidate).is_file()),
+            None,
+        )
+        if video_path is None:
+            video_path = next((path for path in Path(temp_dir).glob(f"{video_id}.*") if path.is_file()), None)
+        if video_path is None:
+            raise InvalidVideoError("The YouTube video could not be downloaded for analysis.")
+
+        video_bytes = video_path.read_bytes()
+        if len(video_bytes) > MAX_VIDEO_BYTES:
+            raise InvalidVideoError("Video downloads must not exceed 100 MB.")
+        duration_seconds, frames = extract_video_frames(video_bytes, video_path.suffix.lower())
+        observations, model = analyze_frames_with_ollama(frames)
+
+    return {
+        **video,
+        "source_type": "youtube",
+        "url": f"https://www.youtube.com/watch?v={video_id}",
+        "title": video.get("title") or info.get("title") or "Untitled YouTube video",
+        "description": video.get("description") or info.get("description") or "",
+        "channel_title": video.get("channel_title") or info.get("uploader"),
+        "duration_seconds": duration_seconds,
+        **observations.model_dump(),
+        "analysis_model": model,
+        "review_status": "needs_review",
+    }

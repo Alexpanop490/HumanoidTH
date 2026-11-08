@@ -29,6 +29,7 @@ import {
   XAxis,
   YAxis
 } from "recharts";
+import { isThaiJoTopicMatch } from "@/lib/thaijo-relevance";
 import styles from "./track.module.css";
 
 export type PerspectiveRecord = {
@@ -54,6 +55,7 @@ export type ThaiJoRecord = {
   url: string;
   year: number | null;
   keywords: string[];
+  searchText?: string;
 };
 
 type Props = {
@@ -237,7 +239,10 @@ function ThaiJoResearch({ thaiJoRecords }: { thaiJoRecords: ThaiJoRecord[] }) {
   const filteredThaiJo = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
     return thaiJoRecords.filter((item) => {
+      const searchableText = [item.searchText ?? "", item.title, item.excerpt, item.journal ?? "", ...item.keywords].join(" ");
+      const matchesTopic = isThaiJoTopicMatch(searchableText);
       const matchesQuery = !normalizedQuery || [
+        item.searchText ?? "",
         item.title,
         item.author ?? "",
         item.journal ?? "",
@@ -245,7 +250,7 @@ function ThaiJoResearch({ thaiJoRecords }: { thaiJoRecords: ThaiJoRecord[] }) {
         ...item.keywords
       ].some((value) => value.toLowerCase().includes(normalizedQuery));
       const matchesYear = yearFilter === "All years" || String(item.year ?? "Unknown") === yearFilter;
-      return matchesQuery && matchesYear;
+      return matchesTopic && matchesQuery && matchesYear;
     });
   }, [query, thaiJoRecords, yearFilter]);
 

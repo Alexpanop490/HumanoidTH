@@ -16,5 +16,7 @@ export type IngestResult = {
   query: string;
   recordsFound: number;
   recordsSaved: number;
+  recordsAnalyzed?: number;
+  confirmedHumanoidVideos?: number;
   missingKeys?: string[];
 };

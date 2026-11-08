@@ -20,9 +20,11 @@ from humanoid_atlas.pipeline.video_analysis import (
     MAX_VIDEO_BYTES,
     InvalidVideoError,
     OllamaUnavailableError,
+    analyze_youtube_video,
     analyze_frames_with_ollama,
     extract_video_frames,
 )
+from youtube_converter import save_video_analysis_record
 
 
 templates = Jinja2Templates(directory="src/humanoid_atlas/viewer/templates")
@@ -31,6 +33,18 @@ templates = Jinja2Templates(directory="src/humanoid_atlas/viewer/templates")
 class YoutubeImportRequest(BaseModel):
     query: str = Field(min_length=1, max_length=500)
     limit: int = Field(default=10, ge=1, le=50)
+
+
+class YoutubeVideoInput(BaseModel):
+    video_id: str = Field(pattern=r"^[A-Za-z0-9_-]{11}$")
+    title: str = Field(default="", max_length=500)
+    description: str = Field(default="", max_length=5000)
+    channel_title: str | None = Field(default=None, max_length=300)
+    published_at: str | None = None
+
+
+class YoutubeAnalyzeRequest(BaseModel):
+    videos: list[YoutubeVideoInput] = Field(min_length=1, max_length=3)
 
 
 def _stats() -> dict:
@@ -90,6 +104,23 @@ def create_app() -> FastAPI:
         if result.get("missing_keys"):
             raise HTTPException(status_code=503, detail="YOUTUBE_API_KEY is not configured for the Humanoid API server.")
         return {"imported": len(result), "videos": result}
+
+    @app.post("/api/youtube/analyze")
+    def analyze_youtube_videos(payload: YoutubeAnalyzeRequest):
+        analyzed = []
+        failed = []
+        for video in payload.videos:
+            try:
+                result = analyze_youtube_video(video.model_dump())
+                save_video_analysis_record(result)
+                analyzed.append(result)
+            except Exception as error:
+                failed.append({"video_id": video.video_id, "error": str(error)})
+
+        if not analyzed:
+            detail = failed[0]["error"] if failed else "No videos were analyzed."
+            raise HTTPException(status_code=503, detail=detail)
+        return {"analyzed": len(analyzed), "failed": len(failed), "videos": analyzed, "errors": failed}
 
     @app.post("/api/videos", status_code=201)
     def analyze_video(file: UploadFile = File(...)):

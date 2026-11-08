@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f5f7f2">
+    <meta name="description" content="Thailand Humanoid Atlas maps robotics research, deployments, public perspectives, and community contributions across Thailand.">
+    <title>Thailand Humanoid Atlas | Robotics, mapped together</title>
+    <link rel="icon" href="public/logo.png" type="image/png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        color-scheme: light;
+        --ink: #17241d;
+        --muted: #64736a;
+        --green: #165c43;
+        --green-dark: #104633;
+        --coral: #e3745d;
+        --gold: #e6b64e;
+        --paper: #f5f7f2;
+        --line: #dce4dc;
+        --mono: "DM Mono", "Courier New", monospace;
+        --sans: "Manrope", "Trebuchet MS", sans-serif;
+      }
+
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body {
+        margin: 0;
+        color: var(--ink);
+        background-color: var(--paper);
+        background-image: linear-gradient(rgba(22, 92, 67, .035) 1px, transparent 1px), linear-gradient(90deg, rgba(22, 92, 67, .035) 1px, transparent 1px);
+        background-size: 32px 32px;
+        font-family: var(--sans);
+        -webkit-font-smoothing: antialiased;
+      }
+
+      a { color: inherit; }
+      .shell { width: min(1160px, calc(100% - 48px)); margin-inline: auto; }
+      .topbar { display: flex; align-items: center; justify-content: space-between; min-height: 82px; border-bottom: 1px solid var(--line); }
+      .brand { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; font-size: 13px; font-weight: 800; }
+      .brand img { width: 38px; height: 38px; object-fit: contain; }
+      .brand span { max-width: 180px; line-height: 1.25; }
+      .top-links { display: flex; align-items: center; gap: 26px; font-family: var(--mono); font-size: 11px; text-transform: uppercase; }
+      .top-links a { text-decoration: none; }
+      .top-links a:hover, .text-link:hover { color: var(--coral); }
+      .hero { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(320px, .75fr); align-items: center; gap: 64px; padding: 82px 0 76px; }
+      .eyebrow { display: inline-flex; align-items: center; gap: 10px; color: var(--green); font: 11px var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+      .eyebrow::before { width: 24px; height: 2px; background: var(--coral); content: ""; }
+      h1 { max-width: 720px; margin: 20px 0 18px; font-size: clamp(42px, 6vw, 78px); line-height: .99; letter-spacing: -.055em; }
+      h1 span { color: var(--green); }
+      .hero-copy { max-width: 580px; color: var(--muted); font-size: 16px; line-height: 1.8; }
+      .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 30px; }
+      .button { display: inline-flex; min-height: 48px; align-items: center; justify-content: center; gap: 10px; padding: 0 18px; border: 1px solid var(--green); background: var(--green); color: white; font-size: 13px; font-weight: 700; text-decoration: none; transition: background .18s ease, transform .18s ease; }
+      .button:hover { transform: translateY(-2px); background: var(--green-dark); }
+      .button.secondary { background: transparent; color: var(--ink); border-color: var(--line); }
+      .button.secondary:hover { border-color: var(--green); background: white; }
+      .arrow { font-size: 17px; line-height: 1; }
+      .hero-art { position: relative; display: grid; min-height: 360px; place-items: center; border: 1px solid #cdd9cf; background: rgba(255,255,255,.62); }
+      .hero-art::before, .hero-art::after { position: absolute; z-index: -1; width: 72%; height: 72%; border: 1px solid rgba(22,92,67,.2); content: ""; }
+      .hero-art::before { transform: rotate(9deg); }
+      .hero-art::after { transform: rotate(-8deg); border-color: rgba(227,116,93,.3); }
+      .hero-art img { width: min(66%, 240px); height: auto; filter: drop-shadow(0 18px 22px rgba(18,59,43,.13)); }
+      .art-label { position: absolute; padding: 7px 9px; background: var(--gold); color: var(--ink); font: 10px var(--mono); text-transform: uppercase; }
+      .art-label.top { top: 18px; left: 18px; }
+      .art-label.bottom { right: 18px; bottom: 18px; background: var(--green); color: white; }
+      .metrics { display: grid; grid-template-columns: repeat(3, 1fr); border-block: 1px solid var(--line); }
+      .metric { padding: 23px 26px 23px 0; }
+      .metric + .metric { padding-left: 26px; border-left: 1px solid var(--line); }
+      .metric strong { display: block; font-size: 18px; letter-spacing: -.03em; }
+      .metric span { display: block; margin-top: 5px; color: var(--muted); font: 10px var(--mono); text-transform: uppercase; }
+      .section { padding: 80px 0; }
+      .section-heading { display: flex; align-items: end; justify-content: space-between; gap: 24px; margin-bottom: 28px; }
+      .section-heading h2 { max-width: 520px; margin: 12px 0 0; font-size: clamp(30px, 4vw, 44px); letter-spacing: -.045em; line-height: 1.1; }
+      .section-heading p { max-width: 380px; margin: 0; color: var(--muted); font-size: 13px; line-height: 1.7; }
+      .layers { display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--line); background: rgba(255,255,255,.7); }
+      .layer { min-height: 204px; padding: 22px 19px; }
+      .layer + .layer { border-left: 1px solid var(--line); }
+      .layer-number { display: flex; width: 32px; height: 32px; align-items: center; justify-content: center; background: var(--green); color: white; font: 11px var(--mono); }
+      .layer:nth-child(2) .layer-number { background: var(--coral); }
+      .layer:nth-child(3) .layer-number { background: #527d70; }
+      .layer:nth-child(4) .layer-number { background: #c3902d; }
+      .layer h3 { margin: 23px 0 8px; font-size: 16px; }
+      .layer p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.65; }
+      .deploy { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 34px; padding: 32px; background: var(--green-dark); color: white; }
+      .deploy .eyebrow { color: #b8d7c6; }
+      .deploy h2 { margin: 12px 0 8px; font-size: clamp(24px, 3vw, 34px); letter-spacing: -.04em; }
+      .deploy p { max-width: 680px; margin: 0; color: #d0e0d6; font-size: 13px; line-height: 1.75; }
+      .deploy .button { background: var(--gold); border-color: var(--gold); color: var(--ink); white-space: nowrap; }
+      .deploy .button:hover { background: #f0c866; }
+      .foot { display: flex; justify-content: space-between; gap: 20px; padding: 23px 0 28px; border-top: 1px solid var(--line); color: var(--muted); font: 10px var(--mono); }
+      .foot a { color: var(--green); text-decoration: none; }
+
+      @media (max-width: 760px) {
+        .shell { width: min(100% - 32px, 560px); }
+        .topbar { min-height: 70px; }
+        .top-links { gap: 15px; font-size: 10px; }
+        .top-links a:first-child { display: none; }
+        .hero { grid-template-columns: 1fr; gap: 38px; padding: 58px 0 48px; }
+        .hero-art { min-height: 280px; }
+        .metrics { grid-template-columns: 1fr; }
+        .metric, .metric + .metric { padding: 16px 0; border-left: 0; }
+        .metric + .metric { border-top: 1px solid var(--line); }
+        .section { padding: 58px 0; }
+        .section-heading { display: block; }
+        .section-heading p { margin-top: 14px; }
+        .layers { grid-template-columns: repeat(2, 1fr); }
+        .layer { min-height: 190px; }
+        .layer:nth-child(3) { border-left: 0; border-top: 1px solid var(--line); }
+        .layer:nth-child(4) { border-top: 1px solid var(--line); }
+        .deploy { grid-template-columns: 1fr; gap: 22px; padding: 24px; }
+        .deploy .button { justify-self: start; }
+        .foot { flex-direction: column; }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html { scroll-behavior: auto; }
+        *, *::before, *::after { transition-duration: .01ms !important; }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="shell topbar">
+      <a class="brand" href="#home" aria-label="Thailand Humanoid Atlas home">
+        <img src="public/logo.png" alt="">
+        <span>THAILAND<br>HUMANOID ATLAS</span>
+      </a>
+      <nav class="top-links" aria-label="Main navigation">
+        <a href="#atlas">The atlas</a>
+        <a href="#deploy">Deployment</a>
+        <a href="https://github.com/taechasith/HumanoidTH">GitHub <span aria-hidden="true">↗</span></a>
+      </nav>
+    </header>
+
+    <main id="home" class="shell">
+      <section class="hero" aria-labelledby="page-title">
+        <div>
+          <span class="eyebrow">A living map of robotics in Thailand</span>
+          <h1 id="page-title">Robotics,<br><span>mapped together.</span></h1>
+          <p class="hero-copy">Thailand Humanoid Atlas brings research, robot deployments, public perspectives, and community contributions into one open resource for understanding the country’s robotics ecosystem.</p>
+          <div class="actions">
+            <a class="button" href="https://github.com/taechasith/HumanoidTH">Explore the project <span class="arrow" aria-hidden="true">↗</span></a>
+            <a class="button secondary" href="#atlas">See what it maps <span class="arrow" aria-hidden="true">↓</span></a>
+          </div>
+        </div>
+        <div class="hero-art" aria-label="Thailand Humanoid Atlas mark">
+          <span class="art-label top">Open research · TH</span>
+          <img src="public/logo.png" alt="Thailand Humanoid Atlas logo">
+          <span class="art-label bottom">People + machines</span>
+        </div>
+      </section>
+
+      <section class="metrics" aria-label="Project attributes">
+        <div class="metric"><strong>Thailand-focused</strong><span>Regional robotics ecosystem</span></div>
+        <div class="metric"><strong>Open-source</strong><span>Community-built resource</span></div>
+        <div class="metric"><strong>Evidence-linked</strong><span>Sources behind the records</span></div>
+      </section>
+
+      <section class="section" id="atlas" aria-labelledby="atlas-title">
+        <div class="section-heading">
+          <div>
+            <span class="eyebrow">One connected ecosystem</span>
+            <h2 id="atlas-title">A clearer picture, from four angles.</h2>
+          </div>
+          <p>The Atlas organizes a fast-changing field into connected records that researchers, builders, and the public can explore.</p>
+        </div>
+        <div class="layers">
+          <article class="layer"><span class="layer-number">01</span><h3>Public perspectives</h3><p>Media, sentiment, stance, trust, and questions around social robotics.</p></article>
+          <article class="layer"><span class="layer-number">02</span><h3>Research & makers</h3><p>People, papers, open-source projects, hardware, and community activity.</p></article>
+          <article class="layer"><span class="layer-number">03</span><h3>Robot models</h3><p>Robots researched, observed, or deployed across Thailand.</p></article>
+          <article class="layer"><span class="layer-number">04</span><h3>Physical inventory</h3><p>Ownership, condition, availability, and maintenance of real-world assets.</p></article>
+        </div>
+      </section>
+
+      <section class="deploy" id="deploy" aria-labelledby="deploy-title">
+        <div>
+          <span class="eyebrow">Publishing & hosting</span>
+          <h2 id="deploy-title">A GitHub Pages front door. A full app on Vercel.</h2>
+          <p>This page is static and can be published with GitHub Pages. The complete Atlas uses Next.js server features and PostgreSQL, so its interactive routes and database need an application host. Deploy the repository to Vercel and configure the environment variables described in the README.</p>
+        </div>
+        <a class="button" href="https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Ftaechasith%2FHumanoidTH">Deploy full app <span class="arrow" aria-hidden="true">↗</span></a>
+      </section>
+
+      <footer class="foot">
+        <span>THA / HUMANOID ATLAS · OPEN RESEARCH</span>
+        <span>Built for the robotics community in Thailand · <a href="https://github.com/taechasith/HumanoidTH">View source on GitHub</a></span>
+      </footer>
+    </main>
+  </body>
+</html>

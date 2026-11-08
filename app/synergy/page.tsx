@@ -153,7 +153,8 @@ export default async function Synergy() {
         excerpt: source.excerpt,
         url: source.url,
         year,
-        keywords
+        keywords,
+        searchText: textValue(meta?.searchText) ?? ""
       };
     });
 

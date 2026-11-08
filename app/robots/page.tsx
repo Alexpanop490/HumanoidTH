@@ -124,6 +124,22 @@ function getRobotSourceImage(robot: RobotLike, sources: SourceLike[]) {
   return getSourceImageUrl(source?.url ?? robot.officialUrl, source?.rawMeta ?? null);
 }
 
+function getVideoAnalysis(sourceMeta: unknown) {
+  const analysis = asRecord(asRecord(sourceMeta)?.humanoidAnalysis);
+  if (!analysis) return null;
+  const actions = Array.isArray(analysis.actions_observed)
+    ? analysis.actions_observed.filter((value): value is string => typeof value === "string")
+    : [];
+  const evidence = Array.isArray(analysis.evidence)
+    ? analysis.evidence.filter((value): value is string => typeof value === "string")
+    : [];
+  return {
+    confidence: typeof analysis.confidence === "number" ? analysis.confidence : null,
+    actions,
+    evidence
+  };
+}
+
 export default async function RobotsPage() {
   const cookieStore = await cookies();
   const lang = (cookieStore.get("lang")?.value || "en") as "en" | "th";
@@ -172,6 +188,7 @@ export default async function RobotsPage() {
       <div className="cards">
         {robots.map((robot) => {
           const bannerUrl = getRobotSourceImage(robot, sources);
+          const videoAnalysis = getVideoAnalysis(robot.sourceMeta);
           return (
             <article className="card" key={robot.id}>
               <div className="card-banner">
@@ -185,6 +202,14 @@ export default async function RobotsPage() {
               <p className="muted">{robot.description ?? "No description yet."}</p>
               <p><span className="badge">{robot.robotType}</span> <span className="badge">{robot.thailandStatus}</span></p>
               <p><strong>{robot.manufacturer ?? robot.developerOrg ?? "Unknown developer"}</strong><br />{robot.primaryUseCase ?? "Use case unclassified"}</p>
+              {videoAnalysis && (
+                <div>
+                  <p><strong>YouTube visual analysis</strong>{videoAnalysis.confidence !== null ? ` · ${Math.round(videoAnalysis.confidence * 100)}% confidence` : ""}</p>
+                  {videoAnalysis.actions.length > 0 && <p className="muted">Observed: {videoAnalysis.actions.join(", ")}</p>}
+                  {videoAnalysis.evidence.length > 0 && <p className="muted">Evidence: {videoAnalysis.evidence.join(" ")}</p>}
+                  <p className="muted">Automated identification; expert review is pending.</p>
+                </div>
+              )}
               {robot.officialUrl && <a href={robot.officialUrl} target="_blank" rel="noopener noreferrer">Source</a>}
             </article>
           );
