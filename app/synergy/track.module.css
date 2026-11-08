@@ -5,6 +5,89 @@
   min-width: 0;
 }
 
+:global(html[data-theme="dark"]) .workspace {
+  color: var(--text-primary);
+}
+
+:global(html[data-theme="dark"]) .workspace .tabBar,
+:global(html[data-theme="dark"]) .workspace .tabPanel,
+:global(html[data-theme="dark"]) .workspace .metric,
+:global(html[data-theme="dark"]) .workspace .chartCard,
+:global(html[data-theme="dark"]) .workspace .summaryChartCard,
+:global(html[data-theme="dark"]) .workspace .briefCard,
+:global(html[data-theme="dark"]) .workspace .assistantResponse,
+:global(html[data-theme="dark"]) .workspace .pullPanel,
+:global(html[data-theme="dark"]) .workspace .filterBar,
+:global(html[data-theme="dark"]) .workspace .articleCard {
+  background: var(--surface);
+  border-color: var(--border);
+  color: var(--text-primary);
+}
+
+:global(html[data-theme="dark"]) .workspace .tabCount,
+:global(html[data-theme="dark"]) .workspace .chartTotal,
+:global(html[data-theme="dark"]) .workspace .dataNote,
+:global(html[data-theme="dark"]) .workspace .searchBox,
+:global(html[data-theme="dark"]) .workspace .filterSelect {
+  background: var(--surface-muted);
+  border-color: var(--border);
+  color: var(--text-secondary);
+}
+
+:global(html[data-theme="dark"]) .workspace .tab,
+:global(html[data-theme="dark"]) .workspace .tabIndex,
+:global(html[data-theme="dark"]) .workspace .panelEyebrow,
+:global(html[data-theme="dark"]) .workspace .sectionEyebrow,
+:global(html[data-theme="dark"]) .workspace .metricTop,
+:global(html[data-theme="dark"]) .workspace .metric small,
+:global(html[data-theme="dark"]) .workspace .sectionIntro > p,
+:global(html[data-theme="dark"]) .workspace .cardHeading p,
+:global(html[data-theme="dark"]) .workspace .assistantFootnote,
+:global(html[data-theme="dark"]) .workspace .pullPanel span,
+:global(html[data-theme="dark"]) .workspace .articleKeywords,
+:global(html[data-theme="dark"]) .workspace .chartEmpty,
+:global(html[data-theme="dark"]) .workspace .emptyState {
+  color: var(--text-secondary);
+}
+
+:global(html[data-theme="dark"]) .workspace h2,
+:global(html[data-theme="dark"]) .workspace h3,
+:global(html[data-theme="dark"]) .workspace strong,
+:global(html[data-theme="dark"]) .workspace .legend li {
+  color: var(--text-primary);
+}
+
+:global(html[data-theme="dark"]) .workspace .tab.activeTab {
+  background: var(--surface-muted);
+  border-color: var(--border);
+  color: var(--text-primary);
+}
+
+:global(html[data-theme="dark"]) .workspace .assistantIcon {
+  background: #294536;
+  color: #a3ddb3;
+}
+
+:global(html[data-theme="dark"]) .workspace .assistantError {
+  background: #3d2422;
+  border-color: #79433e;
+  color: #f0aaa2;
+}
+
+:global(html[data-theme="dark"]) .workspace .askForm input {
+  background: var(--surface-muted);
+  border-color: var(--border);
+  color: var(--text-primary);
+}
+
+:global(html[data-theme="dark"]) .workspace .summaryButton,
+:global(html[data-theme="dark"]) .workspace .askForm button,
+:global(html[data-theme="dark"]) .workspace .pullPanel button {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #111a16;
+}
+
 .tabBar {
   align-items: stretch;
   background: #edf2ed;

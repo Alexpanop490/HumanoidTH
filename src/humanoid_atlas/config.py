@@ -15,6 +15,8 @@ class Settings(BaseSettings):
     llm_provider: str = "none"
     youtube_api_key: str = ""
     github_token: str = ""
+    ollama_base_url: str = "http://localhost:11434"
+    ollama_vision_model: str = "qwen2.5vl:3b"
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 

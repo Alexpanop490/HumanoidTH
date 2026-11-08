@@ -26,6 +26,19 @@
   padding-bottom: 4px;
 }
 
+:global(html[data-theme="dark"]) .tabs {
+  border-color: var(--border);
+}
+
+:global(html[data-theme="dark"]) .tab {
+  color: var(--text-secondary);
+}
+
+:global(html[data-theme="dark"]) .tab.active {
+  border-color: var(--accent);
+  color: var(--text-primary);
+}
+
 .tabs {
     display: flex;
     flex-direction: row;

@@ -622,6 +622,32 @@ export default async function OverviewPage() {
           white-space: pre-wrap;
         }
 
+        html[data-theme="dark"] .atlas-page .topbar h1,
+        html[data-theme="dark"] .atlas-page .subtitle,
+        html[data-theme="dark"] .atlas-page .metric-card p,
+        html[data-theme="dark"] .atlas-page .metric-card strong,
+        html[data-theme="dark"] .atlas-page .glass-card h3 {
+          color: var(--text-primary);
+        }
+
+        html[data-theme="dark"] .atlas-page .glass-card {
+          background: #26382e;
+          border-color: rgba(133, 185, 149, 0.4);
+          box-shadow: 0 10px 24px rgba(0, 0, 0, 0.32);
+        }
+
+        html[data-theme="dark"] .atlas-page .topbar h1 span {
+          color: var(--warning);
+        }
+
+        html[data-theme="dark"] .atlas-page .topbar .actions .button:not(.primary) {
+          color: var(--text-primary);
+        }
+
+        html[data-theme="dark"] .atlas-page .alert {
+          color: #ffc1ba;
+        }
+
         @keyframes spinRing {
           0% { transform: rotateX(72deg) rotateY(15deg) rotate(0deg); }
           100% { transform: rotateX(72deg) rotateY(15deg) rotate(360deg); }
@@ -657,6 +683,9 @@ export default async function OverviewPage() {
             letter-spacing: -0.5px;
             margin: 0;
             color: #2e3230;
+          }
+          html[data-theme="dark"] .atlas-page .topbar h1 {
+            color: var(--text-primary);
           }
           .topbar .subtitle,
           .topbar .actions {

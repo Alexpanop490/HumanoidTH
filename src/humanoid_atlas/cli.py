@@ -139,7 +139,7 @@ def analyze_stats() -> None:
 @export_app.command("csv")
 def export_csv(table: str = typer.Option(..., "--table"), out: Path = typer.Option(Path("data/exports"), "--out")) -> None:
     init_db()
-    allowed = {"sources", "robot_models", "owned_inventory", "contributions", "perspective_annotations", "submitted_data"}
+    allowed = {"sources", "robot_models", "owned_inventory", "contributions", "perspective_annotations", "submitted_data", "video_analyses"}
     if table not in allowed:
         raise typer.BadParameter(f"Table must be one of {sorted(allowed)}")
     out.mkdir(parents=True, exist_ok=True)

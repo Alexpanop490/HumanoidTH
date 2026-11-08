@@ -121,6 +121,29 @@ curl -X POST http://localhost:3000/api/ingest/github \
   -d '{"query":"robotics thailand","limit":10}'
 ```
 
+### 🎞️ Analyze uploaded videos with Ollama
+
+The Python API samples frames from an uploaded video, sends those frames to a local Ollama vision model, and returns a persisted JSON record with a summary, detected robots, observed actions, timestamps, evidence, and a review status. The original video is not retained. Start Ollama and pull a vision model before using the endpoint:
+
+```bash
+ollama pull qwen2.5vl:3b
+```
+
+Configure `OLLAMA_BASE_URL` and `OLLAMA_VISION_MODEL` in `.env` if needed, then start the Python API:
+
+```bash
+humanoid-atlas serve --host 127.0.0.1 --port 8000
+```
+
+Upload a video (maximum 100 MB and 60 minutes) to `POST /api/videos`:
+
+```bash
+curl -X POST http://127.0.0.1:8000/api/videos \
+  -F "file=@robot-demo.mp4"
+```
+
+The response is the web-importable record. Retrieve saved records from `GET /api/videos` or a record by ID from `GET /api/videos/{id}`. Uploads require a supported video extension; analysis errors are returned explicitly if the video cannot be decoded or Ollama is unavailable.
+
 ---
 
 ## 🌐 Product Routes Map

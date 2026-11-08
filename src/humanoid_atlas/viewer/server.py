@@ -1,6 +1,8 @@
 import json
+import uuid
+from pathlib import Path
 
-from fastapi import FastAPI, Form, HTTPException, Request
+from fastapi import FastAPI, File, Form, HTTPException, Request, UploadFile
 from fastapi.responses import RedirectResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -11,6 +13,14 @@ from humanoid_atlas.db.repos import now, rows
 from humanoid_atlas.db.session import connect
 from humanoid_atlas.pipeline.graph_metrics import rebuild_graph_cache
 from humanoid_atlas.pipeline.taxonomy_stats import rebuild_stats_cache
+from humanoid_atlas.pipeline.video_analysis import (
+    ALLOWED_VIDEO_SUFFIXES,
+    MAX_VIDEO_BYTES,
+    InvalidVideoError,
+    OllamaUnavailableError,
+    analyze_frames_with_ollama,
+    extract_video_frames,
+)
 
 
 templates = Jinja2Templates(directory="src/humanoid_atlas/viewer/templates")
@@ -39,6 +49,7 @@ ALLOWED_TABLES = {
     "contributions": "contributions",
     "perspective_annotations": "perspective_annotations",
     "submitted_data": "submitted_data",
+    "video_analyses": "video_analyses",
 }
 
 
@@ -52,6 +63,74 @@ def create_app() -> FastAPI:
     def dashboard(request: Request):
         latest = rows("SELECT pipeline_name,status,finished_at FROM pipeline_runs ORDER BY id DESC LIMIT 1")
         return render(request, "dashboard.html", latest=latest[0] if latest else None)
+
+    @app.post("/api/videos", status_code=201)
+    def analyze_video(file: UploadFile = File(...)):
+        filename = (file.filename or "upload").replace("\\", "/").rsplit("/", 1)[-1]
+        suffix = Path(filename).suffix.lower()
+        if suffix not in ALLOWED_VIDEO_SUFFIXES:
+            raise HTTPException(status_code=415, detail="Upload a supported video file: AVI, M4V, MKV, MOV, MP4, or WebM.")
+
+        video_bytes = file.file.read(MAX_VIDEO_BYTES + 1)
+        if len(video_bytes) > MAX_VIDEO_BYTES:
+            raise HTTPException(status_code=413, detail="Video uploads must not exceed 100 MB.")
+        if not video_bytes:
+            raise HTTPException(status_code=422, detail="The uploaded video is empty.")
+
+        try:
+            duration_seconds, frames = extract_video_frames(video_bytes, suffix)
+            observations, model = analyze_frames_with_ollama(frames)
+        except InvalidVideoError as error:
+            raise HTTPException(status_code=422, detail=str(error)) from error
+        except OllamaUnavailableError as error:
+            raise HTTPException(status_code=503, detail=str(error)) from error
+
+        timestamp = now()
+        record_id = str(uuid.uuid4())
+        record = {
+            "id": record_id,
+            "source_type": "video_upload",
+            "title": Path(filename).stem,
+            "filename": filename,
+            "media_type": file.content_type or "application/octet-stream",
+            "duration_seconds": round(duration_seconds, 3),
+            **observations.model_dump(),
+            "analysis_model": model,
+            "review_status": "needs_review",
+            "created_at": timestamp,
+        }
+        with connect() as conn:
+            conn.execute(
+                """
+                INSERT INTO video_analyses
+                    (id,filename,media_type,duration_seconds,analysis_model,analysis_json,created_at)
+                VALUES(?,?,?,?,?,?,?)
+                """,
+                (
+                    record_id,
+                    filename,
+                    record["media_type"],
+                    record["duration_seconds"],
+                    model,
+                    json.dumps(record, ensure_ascii=False),
+                    timestamp,
+                ),
+            )
+        return record
+
+    @app.get("/api/videos")
+    def list_video_analyses():
+        return [
+            json.loads(row["analysis_json"])
+            for row in rows("SELECT analysis_json FROM video_analyses ORDER BY created_at DESC")
+        ]
+
+    @app.get("/api/videos/{video_id}")
+    def get_video_analysis(video_id: str):
+        matches = rows("SELECT analysis_json FROM video_analyses WHERE id=?", (video_id,))
+        if not matches:
+            raise HTTPException(status_code=404, detail="Video analysis not found.")
+        return json.loads(matches[0]["analysis_json"])
 
     @app.get("/perspectives")
     def perspectives(request: Request):

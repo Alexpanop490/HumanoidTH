@@ -149,6 +149,16 @@ CREATE TABLE IF NOT EXISTS pipeline_runs (
     details_json TEXT NOT NULL DEFAULT '{}'
 );
 
+CREATE TABLE IF NOT EXISTS video_analyses (
+    id TEXT PRIMARY KEY,
+    filename TEXT NOT NULL,
+    media_type TEXT NOT NULL,
+    duration_seconds REAL,
+    analysis_model TEXT NOT NULL,
+    analysis_json TEXT NOT NULL,
+    created_at TEXT NOT NULL
+);
+
 CREATE INDEX IF NOT EXISTS idx_sources_type ON sources(source_type);
 CREATE INDEX IF NOT EXISTS idx_sources_relevance ON sources(relevance_status);
 CREATE INDEX IF NOT EXISTS idx_triplets_relation ON triplets(relation);

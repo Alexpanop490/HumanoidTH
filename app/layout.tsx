@@ -7,6 +7,7 @@ import MobileHeader from "./components/MobileHeader";
 import MobileTabNav from "./components/MobileTabNav";
 import DataPullFab from "./components/DataPullFab";
 import FirstTimeLoader from "./components/FirstTimeLoader";
+import ThemeToggle from "./components/ThemeToggle";
 import { getTranslation } from "@/lib/translations";
 import { defaultSeoDescription, getSiteUrl, siteName } from "@/lib/seo";
 import "./globals.css";
@@ -98,6 +99,7 @@ export const metadata: Metadata = {
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const cookieStore = await cookies();
   const lang = (cookieStore.get("lang")?.value || "en") as "en" | "th";
+  const theme = cookieStore.get("theme")?.value === "dark" ? "dark" : "light";
   const t = getTranslation(lang);
   const siteUrl = getSiteUrl();
   const structuredData = {
@@ -129,7 +131,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   };
 
   return (
-    <html lang={lang} suppressHydrationWarning={true} className={`${inter.variable} ${ibmPlexSansThai.variable}`}>
+    <html lang={lang} data-theme={theme} suppressHydrationWarning={true} className={`${inter.variable} ${ibmPlexSansThai.variable}`}>
       <body suppressHydrationWarning={true}>
         <script
           type="application/ld+json"
@@ -137,7 +139,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         />
         <FirstTimeLoader />
         <div className="app-shell">
-          <MobileHeader />
+          <MobileHeader theme={theme} />
           <aside className="sidebar">
             <div className="brand-logo-container">
               <img src="/logo.png" alt="Thailand Humanoid Atlas" className="brand-logo" />
@@ -146,6 +148,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               <SidebarNav currentLang={lang} />
             </div>
             <div style={{ paddingTop: "14px", borderTop: "1px solid #14352a", marginTop: "auto" }}>
+              <ThemeToggle initialTheme={theme} />
               <LanguageSelector currentLang={lang} />
             </div>
           </aside>
