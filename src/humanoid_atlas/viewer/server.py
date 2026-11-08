@@ -6,6 +6,8 @@ from fastapi import FastAPI, File, Form, HTTPException, Request, UploadFile
 from fastapi.responses import RedirectResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+import httpx
+from pydantic import BaseModel, Field
 
 from humanoid_atlas.config import get_settings
 from humanoid_atlas.db.migrate import init_db
@@ -24,6 +26,11 @@ from humanoid_atlas.pipeline.video_analysis import (
 
 
 templates = Jinja2Templates(directory="src/humanoid_atlas/viewer/templates")
+
+
+class YoutubeImportRequest(BaseModel):
+    query: str = Field(min_length=1, max_length=500)
+    limit: int = Field(default=10, ge=1, le=50)
 
 
 def _stats() -> dict:
@@ -63,6 +70,26 @@ def create_app() -> FastAPI:
     def dashboard(request: Request):
         latest = rows("SELECT pipeline_name,status,finished_at FROM pipeline_runs ORDER BY id DESC LIMIT 1")
         return render(request, "dashboard.html", latest=latest[0] if latest else None)
+
+    @app.post("/api/youtube/import")
+    def import_youtube_videos(payload: YoutubeImportRequest):
+        from youtube_converter import ingest_and_store_video_records
+
+        try:
+            result = ingest_and_store_video_records(payload.query.strip(), limit=payload.limit)
+        except httpx.HTTPStatusError as error:
+            try:
+                api_error = error.response.json().get("error", {}).get("message")
+            except (ValueError, AttributeError):
+                api_error = None
+            message = api_error or f"YouTube API returned HTTP {error.response.status_code}."
+            raise HTTPException(status_code=502, detail=message) from error
+        except httpx.RequestError as error:
+            raise HTTPException(status_code=502, detail="Could not connect to the YouTube API.") from error
+
+        if result.get("missing_keys"):
+            raise HTTPException(status_code=503, detail="YOUTUBE_API_KEY is not configured for the Humanoid API server.")
+        return {"imported": len(result), "videos": result}
 
     @app.post("/api/videos", status_code=201)
     def analyze_video(file: UploadFile = File(...)):

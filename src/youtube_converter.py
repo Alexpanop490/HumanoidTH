@@ -16,6 +16,7 @@ import json
 import os
 import sqlite3
 import subprocess
+import uuid
 from collections import deque
 from datetime import datetime, timezone
 from pathlib import Path
@@ -23,6 +24,8 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import httpx
 from dotenv import load_dotenv
+from humanoid_atlas.db.migrate import init_db
+from humanoid_atlas.db.session import connect
 
 try:  # pragma: no cover - optional dependency
     import cv2  # type: ignore
@@ -40,7 +43,7 @@ except ImportError:  # pragma: no cover - optional dependency
     yt_dlp = None
 
 # Load environment variables from the project root .env file.
-load_dotenv(dotenv_path="/home/bob/HumanoidTH/.env")
+load_dotenv()
 
 
 def get_settings() -> Any:
@@ -414,8 +417,7 @@ def fetch_full_youtube_video_details(video_id: str, api_key: str) -> Dict[str, A
         },
         timeout=20,
     )
-    if response.status_code != 200:
-        return {}
+    response.raise_for_status()
 
     data = response.json().get("items", [])
     if not data:
@@ -448,60 +450,59 @@ def fetch_full_youtube_video_details(video_id: str, api_key: str) -> Dict[str, A
 
 
 def save_video_analysis_record(record: Dict[str, Any]) -> Dict[str, Any]:
-    """Persist a fully structured video analysis record into the local database."""
-    robot_info = record.get("robot_spec") or {}
-    metadata = record.get("raw_metadata") or record.get("metadata") or {}
-    conn = sqlite3.connect("robot_classification.db")
+    """Persist a video analysis using Humanoid Atlas's video_analyses record shape."""
+    video_url = record.get("url") or record.get("video_url")
+    video_id = record.get("video_id")
+    stable_key = str(video_url or video_id or uuid.uuid4())
+    record_id = record.get("id") or str(uuid.uuid5(uuid.NAMESPACE_URL, stable_key))
+    title = record.get("title") or "Untitled YouTube video"
     now_iso = datetime.now(timezone.utc).isoformat()
-    conn.execute(
-        """
-        INSERT INTO video_analysis (
-            video_id, title, description, url, channel_title, published_at, duration, duration_seconds,
-            view_count, like_count, favorite_count, comment_count, tags, category, confidence, method,
-            robot_id, robot_name, manufacturer, morphology, mass_kg, raw_metadata_json, created_at, updated_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        ON CONFLICT(video_id) DO UPDATE SET
-            title=excluded.title, description=excluded.description, url=excluded.url,
-            channel_title=excluded.channel_title, published_at=excluded.published_at,
-            duration=excluded.duration, duration_seconds=excluded.duration_seconds,
-            view_count=excluded.view_count, like_count=excluded.like_count,
-            favorite_count=excluded.favorite_count, comment_count=excluded.comment_count,
-            tags=excluded.tags, category=excluded.category, confidence=excluded.confidence,
-            method=excluded.method, robot_id=excluded.robot_id, robot_name=excluded.robot_name,
-            manufacturer=excluded.manufacturer, morphology=excluded.morphology,
-            mass_kg=excluded.mass_kg, raw_metadata_json=excluded.raw_metadata_json,
-            updated_at=excluded.updated_at
-        """,
-        (
-            record.get("video_id") or record.get("url"),
-            record.get("title"),
-            record.get("description"),
-            record.get("url"),
-            record.get("channel_title"),
-            record.get("published_at"),
-            record.get("duration"),
-            record.get("duration_seconds") or 0,
-            record.get("view_count") or 0,
-            record.get("like_count") or 0,
-            record.get("favorite_count") or 0,
-            record.get("comment_count") or 0,
-            json.dumps(record.get("tags") or [], ensure_ascii=False),
-            record.get("category"),
-            record.get("confidence") or 0.0,
-            record.get("method") or "unknown",
-            record.get("robot_id") or robot_info.get("robot_id"),
-            record.get("robot_name") or robot_info.get("name"),
-            robot_info.get("manufacturer"),
-            robot_info.get("morphology"),
-            robot_info.get("mass"),
-            json.dumps(metadata, ensure_ascii=False),
-            now_iso,
-            now_iso,
-        ),
-    )
-    conn.commit()
-    conn.close()
-    return record
+    payload = {
+        **record,
+        "id": record_id,
+        "source_type": record.get("source_type") or "youtube",
+        "title": title,
+        "filename": record.get("filename") or title,
+        "media_type": record.get("media_type") or "video/youtube",
+        "duration_seconds": record.get("duration_seconds") or 0,
+        "summary": record.get("summary") or record.get("description") or title,
+        "robots_detected": record.get("robots_detected") or [],
+        "actions_observed": record.get("actions_observed") or [],
+        "setting": record.get("setting"),
+        "events": record.get("events") or [],
+        "evidence": record.get("evidence") or [],
+        "confidence": record.get("confidence") or 0.0,
+        "analysis_model": record.get("analysis_model") or record.get("method") or "youtube_data_api",
+        "review_status": record.get("review_status") or "needs_review",
+        "created_at": record.get("created_at") or now_iso,
+    }
+
+    init_db()
+    with connect() as conn:
+        conn.execute(
+            """
+            INSERT INTO video_analyses
+                (id, filename, media_type, duration_seconds, analysis_model, analysis_json, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT(id) DO UPDATE SET
+                filename=excluded.filename,
+                media_type=excluded.media_type,
+                duration_seconds=excluded.duration_seconds,
+                analysis_model=excluded.analysis_model,
+                analysis_json=excluded.analysis_json,
+                created_at=excluded.created_at
+            """,
+            (
+                payload["id"],
+                payload["filename"],
+                payload["media_type"],
+                payload["duration_seconds"],
+                payload["analysis_model"],
+                json.dumps(payload, ensure_ascii=False),
+                payload["created_at"],
+            ),
+        )
+    return payload
 
 
 def query_robot_spec(robot_id: str) -> Optional[Dict[str, Any]]:
@@ -745,18 +746,23 @@ def ingest_and_store_video_records(query: str, limit: int = 10) -> List[Dict[str
     for item in result.get("links", []):
         metadata = item.get("metadata", {})
         classification = metadata.get("classification", {})
+        details = metadata.get("details", {})
         title = item.get("title") or "Untitled video"
         description = item.get("excerpt") or ""
         record = {
-            "video_id": item.get("url", "").split("v=")[-1],
+            "video_id": details.get("video_id") or item.get("url", "").split("v=")[-1],
             "title": title,
             "description": description,
             "url": item.get("url"),
             "channel_title": item.get("author"),
-            "published_at": item.get("published_at"),
-            "duration": None,
-            "duration_seconds": 0,
-            "tags": [],
+            "published_at": details.get("published_at") or item.get("published_at"),
+            "duration": details.get("duration"),
+            "duration_seconds": details.get("duration_seconds") or 0,
+            "view_count": details.get("view_count") or 0,
+            "like_count": details.get("like_count") or 0,
+            "favorite_count": details.get("favorite_count") or 0,
+            "comment_count": details.get("comment_count") or 0,
+            "tags": details.get("tags") or [],
             "category": classification.get("category"),
             "confidence": classification.get("confidence"),
             "method": classification.get("method"),
