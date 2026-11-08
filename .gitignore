@@ -51,15 +51,7 @@ data/*.log
 .DS_Store
 Thumbs.db
 
-<<<<<<< HEAD
-
 # Reference UI Mockups
 *humanoidth.ui/
 *humamnoidth.ui/
 name_of_huge_folder_or_file/
-name_of_huge_folder_or_file/
-=======
-# Reference UI Mockups
-*humanoidth.ui/
-*humamnoidth.ui/
->>>>>>> alex

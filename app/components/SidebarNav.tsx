@@ -50,6 +50,7 @@ export default function SidebarNav({ currentLang = "en" }: SidebarNavProps) {
       {navItems.map((item) => {
         const Icon = item.icon;
         const isActive = item.href === "/admin" ? pathname.startsWith("/admin") : pathname === item.href;
+
         return (
           <Link
             key={item.href}

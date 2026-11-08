@@ -270,11 +270,13 @@ export default async function AnalyticsPage() {
       <h1>{t.analyticsTitle}</h1>
       <p className="muted" style={{ marginBottom: "18px" }}>{t.analyticsDesc}</p>
       <div className="notice">This workspace uses live database rows only. No sample data is injected here.</div>
-      {dbOffline && (
-        <div className="notice" style={{ marginBottom: 16 }}>
-          Live analytics are unavailable. This page needs PostgreSQL to build the analysis workspace.
-        </div>
-      )}
+      {
+        dbOffline && (
+          <div className="notice" style={{ marginBottom: 16 }}>
+            Live analytics are unavailable. This page needs PostgreSQL to build the analysis workspace.
+          </div>
+        )
+      }
       <div className="grid" style={{ margin: "18px 0" }}>
         <div className="panel motion-panel motion-pop">
           <div className="muted">Internet Sources</div>

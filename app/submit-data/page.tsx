@@ -106,10 +106,10 @@ export default async function SubmitDataPage() {
 
   const submissions = currentUser
     ? await prisma.submittedData.findMany({
-      where: { submittedById: currentUser.id },
-      orderBy: { createdAt: "desc" },
-      take: 20
-    })
+        where: { submittedById: currentUser.id },
+        orderBy: { createdAt: "desc" },
+        take: 20
+      })
     : [];
 
   return (
@@ -153,40 +153,38 @@ export default async function SubmitDataPage() {
           <label>
             {localT.type}
             <select name="submissionType" required disabled={!currentUser}>
-              <option value="source_url">Source URL (News, Article, Blog)</option>
-              <option value="robot_model">Robot Model Spec</option>
-              <option value="owned_inventory_update">Owned Inventory Unit Update</option>
-              <option value="contribution_claim">Contribution Claim (Paper, Repo)</option>
-              <option value="event_demo_record">Event or Public Demo Record</option>
-              <option value="correction_request">Database Correction Request</option>
+              <option value="source_link">Source Link</option>
+              <option value="robot_model">Robot Model</option>
+              <option value="inventory">Inventory</option>
+              <option value="paper">Paper</option>
+              <option value="organization">Organization</option>
             </select>
           </label>
 
           <label>
             {localT.title}
-            <input name="title" required disabled={!currentUser} placeholder="e.g. NAO Robot deployment at KMUTT, Dinsaw Mini review" />
+            <input name="title" required disabled={!currentUser} placeholder="Example: Unitree H1 in Bangkok" />
           </label>
 
           <label>
             {localT.refUrl}
-            <input name="url" type="url" disabled={!currentUser} placeholder="https://example.com/source-link" />
+            <input name="url" type="url" disabled={!currentUser} placeholder="https://example.com" />
           </label>
 
           <label>
             {localT.desc}
-            <textarea name="notes" rows={5} disabled={!currentUser} placeholder="Provide source excerpts, model details, correction notes, or inventory context." />
+            <textarea name="notes" rows={5} disabled={!currentUser} placeholder="Describe the source, publication, deployment, or correction details..." />
           </label>
 
-          <button className="primary" type="submit" disabled={!currentUser} style={{ marginTop: 10 }}>
+          <button type="submit" className="primary" disabled={!currentUser}>
             {localT.submitBtn}
           </button>
-          {!currentUser && <p className="muted" style={{ fontSize: 12, margin: 0 }}>{localT.locked}</p>}
         </form>
 
-        <aside className="panel" style={{ fontSize: 13 }}>
+        <aside className="panel">
           <h2>{localT.policyTitle}</h2>
-          <p className="muted" style={{ marginBottom: 10 }}>{localT.policyText}</p>
-          <ul style={{ paddingLeft: 18, margin: "6px 0", color: "var(--text-secondary)", display: "flex", flexDirection: "column", gap: 6 }}>
+          <p className="muted">{localT.policyText}</p>
+          <ul>
             <li>{localT.policyOne}</li>
             <li>{localT.policyTwo}</li>
             <li>{localT.policyThree}</li>
@@ -194,51 +192,55 @@ export default async function SubmitDataPage() {
         </aside>
       </div>
 
-      <h2 style={{ marginTop: 24 }}>{localT.queue}</h2>
-      {currentUser && <p className="muted" style={{ marginTop: -8 }}>{localT.queueHelp}</p>}
-      <div className="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>{localT.titleCol}</th>
-              <th>{localT.typeCol}</th>
-              <th>{localT.statusCol}</th>
-              <th>{localT.notesCol}</th>
-              <th>{localT.dateCol}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {submissions.map((sub) => (
-              <tr key={sub.id}>
-                <td>
-                  <strong>{sub.title}</strong>
-                  {sub.url && (
-                    <div style={{ marginTop: 4 }}>
-                      <a href={sub.url} target="_blank" rel="noreferrer" style={{ fontSize: 12, wordBreak: "break-all" }}>
-                        {sub.url}
-                      </a>
-                    </div>
-                  )}
-                </td>
-                <td><span className="badge">{sub.submissionType.replace(/_/g, " ")}</span></td>
-                <td>
-                  <span className={`badge ${sub.status === "APPROVED" ? "ok" : sub.status === "REJECTED" || sub.status === "FAILED" ? "danger" : "warn"}`}>
-                    {sub.status.toLowerCase()}
-                  </span>
-                </td>
-                <td style={{ fontSize: 12, color: "var(--text-secondary)", maxWidth: 280, wordBreak: "break-word" }}>
-                  {sub.notes || sub.reviewNotes || "Manual review pending."}
-                </td>
-                <td style={{ fontSize: 12 }}>{sub.createdAt.toLocaleDateString()}</td>
-              </tr>
-            ))}
-            {!submissions.length && (
-              <tr>
-                <td className="empty" colSpan={5}>{localT.empty}</td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+      <div className="panel" style={{ marginTop: 24 }}>
+        <h2>{localT.queue}</h2>
+        {currentUser && <p className="muted" style={{ marginTop: -8 }}>{localT.queueHelp}</p>}
+
+        {submissions.length === 0 ? (
+          <p className="muted">{localT.empty}</p>
+        ) : (
+          <div className="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>{localT.titleCol}</th>
+                  <th>{localT.typeCol}</th>
+                  <th>{localT.statusCol}</th>
+                  <th>{localT.notesCol}</th>
+                  <th>{localT.dateCol}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {submissions.map((sub) => (
+                  <tr key={sub.id}>
+                    <td>
+                      <strong>{sub.title}</strong>
+                      {sub.url && (
+                        <div style={{ marginTop: 4 }}>
+                          <a href={sub.url} target="_blank" rel="noreferrer" style={{ fontSize: 12, wordBreak: "break-all" }}>
+                            {sub.url}
+                          </a>
+                        </div>
+                      )}
+                    </td>
+                    <td>
+                      <span className="badge">{sub.submissionType.replace(/_/g, " ")}</span>
+                    </td>
+                    <td>
+                      <span className={`badge ${sub.status === "APPROVED" ? "ok" : sub.status === "REJECTED" ? "danger" : "warn"}`}>
+                        {String(sub.status).toLowerCase()}
+                      </span>
+                    </td>
+                    <td style={{ fontSize: 12, color: "var(--text-secondary)" }}>{sub.notes || "—"}</td>
+                    <td style={{ fontSize: 12, color: "var(--text-secondary)" }}>
+                      {sub.createdAt ? new Date(sub.createdAt).toLocaleDateString() : "—"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </>
   );
